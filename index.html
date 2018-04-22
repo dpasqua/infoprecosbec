@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type = "text/javascript">
+     google.charts.load('current', {packages: ['corechart','line']});  
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="main.css">
+
+</head>
+<body>
+  
+<div class="container">
+
+<div class="row justify-content-center">
+  <h1>BEC Preços</h1>
+</div>
+
+<div class="row justify-content-center">
+    <form class="col-10">
+        <div class="form-group">
+            <label for="inputProduto">Produto</label>
+            <input type="input" class="form-control" id="inputProduto" placeholder="Digite o Produto" />
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputDataInicial">Data Inicial</label>
+                <input type="input" class="form-control" id="inputDataInicial" placeholder="Data Inicial"> 
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputDataFinal">Data Final</label>
+                <input type="input" class="form-control" id="inputDataFinal" placeholder="Data Final"> 
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputUC">UC/UGE</label>
+            <input type="input" class="form-control" id="inputUC" placeholder="UC/UGE" />
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+</div>
+
+<div class="row justify-content-center mt-4">
+  <div id="googleMap" style="width:97%;height:400px;"></div>  
+</div>
+
+<div class="table-wrapper-2 mt-4">
+<table class="table table-responsive-md table-hover">
+  <thead class="thead-dark table-sm">
+    <tr>
+      <th scope="col">COD UC</th>
+      <th scope="col">Órgão</th>
+      <th scope="col">Qtd. OC</th>
+      <th scope="col">Qtd. Unit.</th>
+      <th scope="col">Valor Max. Unit.</th>
+      <th scope="col">Valor Min. Unit.</th>
+      <th scope="col">Média</th>
+      <th scope="col">Links</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="table-warning">
+      <td>------</td>
+      <td>Todos</td>
+      <td>30</td>
+      <td>50000</td>
+      <td>10,18</td>
+      <td>4,56</td>
+      <td>6,84</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>Av. Mariana Ubaldina do Espírito Santo</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF A</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF B</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF C</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF D</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF E</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF F</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF G</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF H</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF I</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+    <tr>
+      <td>13375</td>
+      <td>PREF J</td>
+      <td>3</td>
+      <td>1500</td>
+      <td>9,95</td>
+      <td>5,38</td>
+      <td>6,62</td>
+      <td><a href="">http://www2.bec.gov.br</a></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="row mt-4">
+    <div class="col-lg">
+        <div id="graph_comparativo_preco_medio" style="width: 500px; height: 400px; margin: 0 auto"></div>
+    </div>
+    <div class="col-lg">
+        <div id="graph_comparativo_preco_medio_qtde_oc" style="width: 500px;eight: 400px; margin: 0 auto"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div id="graph_unidade_compradora_regiao" style="width: 750px;eight: 400px; margin: 0 auto"></div>
+</div>
+
+</div>
+
+<script language = "JavaScript">
+
+$(document).ready(function() {
+    var datepicker_options = { language: "pt-BR", format: "dd/mm/yyyy"};
+    $('#inputDataInicial').datepicker(datepicker_options);
+    $('#inputDataFinal').datepicker(datepicker_options);
+});
+
+</script>
+
+<script language = "JavaScript">
+
+function drawChart() {
+    chart1();
+    chart2();
+    chart3();
+}
+
+function chart3() {
+    // Define the chart to be drawn.
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Browser');
+    data.addColumn('number', 'Percentage');
+    data.addRows([
+       ['São Paulo', 45.0],
+       ['Sorocaba', 26.8],
+       ['Bauru', 12.8],
+       ['Marília', 8.5],
+       ['Presidente Prudente', 6.2],
+       ['Araçatuba', 0.7],
+       ['São José do Rio Preto', 0.7],
+       ['Ribeirão Preto', 0.7],
+       ['Araraquara', 0.7],
+       ['Campinas', 0.7],
+       ['São José dos Campos', 0.7],
+    ]);
+       
+    // Set chart options
+    var options = {
+       'title':'Unidades Compradas por Região Geográfica',
+       'width':750,
+       'height':400,
+       is3D:true
+    };
+
+    // Instantiate and draw the chart.
+    var chart = new google.visualization.PieChart(document.getElementById('graph_unidade_compradora_regiao'));
+    chart.draw(data, options);
+}
+
+function chart2() {
+   // Define the chart to be drawn.
+    var data = google.visualization.arrayToDataTable([
+       ['', 'Qtd. OC', 'Preço mais baixo licitado', 'Preço médio licitado'],
+       ['jan',  20, 6, 6],
+       ['fev',  30, 6, 6.50],
+       ['mar',  40,  6, 8],
+       ['abr',  50, 11.3, 8.4],
+       ['mai',  30, 17.0, 13.5],
+       ['jun',  20, 22.0, 17.0],
+       ['jul',  35, 24.8, 18.6],
+       ['ago',  45, 24.1, 17.9],
+       ['set',  55, 20.1, 14.3],
+       ['out',  60, 14.1, 9.0],
+       ['nov',  48,  8.6, 3.9],
+       ['dez',  30,  2.5,  1.0]
+    ]);
+      
+    // Set chart options
+    var options = {
+       title : 'Compartivo de preços médios praticados relacionado a quantidade de OCs',
+       vAxis: {title: 'Valores em Reais'},
+       hAxis: {title: '2018'},
+       seriesType: 'bars',
+       series: {1: {type:'line'}, 2: {type: 'line'}},
+       width:500,
+       height:400,
+       pointsVisible: true
+    };
+
+    // Instantiate and draw the chart.
+    var chart = new google.visualization.ComboChart(document.getElementById('graph_comparativo_preco_medio_qtde_oc'));
+    chart.draw(data, options);
+}
+
+function chart1() {
+    // Define the chart to be drawn.
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Month');
+    data.addColumn('number', 'Preço mais baixo licitado');
+    data.addColumn('number', 'Preço médio licitado');
+    data.addColumn('number', 'Seu preço médio');
+    data.addRows([
+       ['jan',  4.5, 6, 6],
+       ['fev',  5, 6, 6.50],
+       ['mar',  0,  6, 8],
+       ['abr',  14.5, 11.3, 8.4],
+       ['mai',  18.2, 17.0, 13.5],
+       ['jun',  21.5, 22.0, 17.0],
+       ['jul',  25.2, 24.8, 18.6],
+       ['ago',  26.5, 24.1, 17.9],
+       ['set',  23.3, 20.1, 14.3],
+       ['out',  18.3, 14.1, 9.0],
+       ['nov',  13.9,  8.6, 3.9],
+       ['dez',  9.6,  2.5,  1.0]
+    ]);
+       
+    // Set chart options
+    var options = {'title' : 'Comparativo de preços médios praticados',
+       hAxis: {
+          title: '2018'
+       },
+       vAxis: {
+          title: 'Valores em Reais'
+       },   
+       'width':500,
+       'height':400,
+       pointsVisible: true
+    };
+
+    // Instantiate and draw the chart.
+    var chart = new google.visualization.LineChart(document.getElementById('graph_comparativo_preco_medio'));
+    chart.draw(data, options);
+}
+    google.charts.setOnLoadCallback(drawChart);
+</script>
+
+<script>
+function myMap() {
+    var points = [
+        [-23.37132835,-46.50763057, "PREF A"],
+        [-23.38068342,-46.51933063, "PREF B"],
+        [-23.50887798,-46.49556224, "PREF C"],
+        [-23.39671372,-46.56571462, "PREF D"],
+        [-23.4004857,-46.48551614, "PREF E"],
+        [-23.49869399,-46.46341492, "PREF F"],
+        [-23.42659273,-46.50713995, "PREF G"],
+        [-23.40505111,-46.57076647, "PREF H"],
+        [-23.48297368,-46.60150233, "PREF I"],
+        [-23.45003868,-46.52589159, "PREF J"]
+    ];
+
+    var myCenter = new google.maps.LatLng(-23.45646630689063, -46.5166256);
+    var mapProp = {
+        center:myCenter,
+        zoom:11,
+        disableDefaultUI: true
+    };
+
+    var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+    var infowindow = new google.maps.InfoWindow({
+        content: 'Av. Mariana Ubaldina do Espírito Santo'
+    })
+
+    var marker = new google.maps.Marker({position: myCenter, map: map});
+    marker.addListener('click', function() {
+          infowindow.open(map, marker);
+    });
+
+    infowindow.open(map, marker);
+
+    var markers = geraMarks(points, map);
+    var markerCluster = new MarkerClusterer(map, markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
+    function geraMarks(points, map)
+    {
+        var markers = [];
+        points.forEach(p => {
+            var pi = new google.maps.LatLng(p[0], p[1]);
+            var m = new google.maps.Marker({position: pi });
+
+            m.addListener('click', function() {
+                var infowindow = new google.maps.InfoWindow({
+                    content: p[2]
+                })
+                infowindow.open(map, m);
+            });
+
+            markers.push(m);
+        }) 
+    
+        return markers;
+    }
+
+}
+</script>
+
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    </script>
+
+<script async defer 
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhtS5U20lVTSdHMti3O0iol7Vqzd2QMaI&callback=myMap"></script>
+
+</body>
+</html>
