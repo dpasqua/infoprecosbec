@@ -28,39 +28,58 @@
   <h1>BEC Preços</h1>
 </div>
 
-<div class="row justify-content-center">
-    <form class="col-10">
+<div class="container-fluid">
+    <form>
         <div class="form-group">
             <label for="inputProduto">Produto</label>
-            <input type="input" class="form-control" id="inputProduto" placeholder="Digite o Produto" />
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="inputDataInicial">Data Inicial</label>
-                <input type="input" class="form-control" id="inputDataInicial" placeholder="Data Inicial"> 
-            </div>
-            <div class="form-group col-md-6">
-                <label for="inputDataFinal">Data Final</label>
-                <input type="input" class="form-control" id="inputDataFinal" placeholder="Data Final"> 
-            </div>
+            <input type="input" class="form-control" id="inputProduto" placeholder="Digite aqui o produto desejado" />
         </div>
 
         <div class="form-group">
             <label for="inputUC">UC/UGE</label>
-            <input type="input" class="form-control" id="inputUC" placeholder="UC/UGE" />
+            <input type="input" class="form-control" id="inputUC" placeholder="Digite o nome ou código da UC/UGE que será usado como referência" />
         </div>
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        
+        <div class="form-row">
+
+            <div class="form-group col-md-4">
+                <label for="inputDataInicial">Data Inicial</label>
+                <input type="input" class="form-control" id="inputDataInicial" placeholder="Data mais recente"> 
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="inputDataFinal">Data Final</label>
+                <input type="input" class="form-control" id="inputDataFinal" placeholder="Data mais antiga"> 
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="selectRaio">Raio da Busca</label>
+                <select class="form-control" id="selectRaio">
+                    <option>Livre</option>
+                    <option>25km</option>
+                    <option>50km</option>
+                    <option>100km</option>
+                </select>
+            </div>
+            
+            <div class="form-group col-md-2" style="margin-top: 35px;">
+                <button type="submit" class="btn btn-primary btn-sm">🔍 Buscar Referências</button>
+            </div>
+
+        </div>
     </form>
 </div>
 
-<div class="row justify-content-center mt-4">
-  <div id="googleMap" style="width:97%;height:400px;"></div>  
-</div>
+<div class="row mt-4">
 
-<div class="table-wrapper-2 mt-4">
-<table class="table table-responsive-md table-hover">
-  <thead class="thead-dark table-sm">
+    <div class="col">
+      <div id="googleMap" style="width:97%;height:400px;"></div>  
+    </div>
+
+    <div class="col table-wrapper-2">
+
+<table class="table table-condensed table-hover">
+  <thead class="thead-dark table-sm" style="font-size:14px;">
     <tr>
       <th scope="col">COD UC</th>
       <th scope="col">Órgão</th>
@@ -69,7 +88,7 @@
       <th scope="col">Valor Max. Unit.</th>
       <th scope="col">Valor Min. Unit.</th>
       <th scope="col">Média</th>
-      <th scope="col">Links</th>
+      <th scope="col">Ata</th>
     </tr>
   </thead>
   <tbody>
@@ -91,7 +110,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -101,7 +120,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -111,7 +130,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -121,7 +140,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -131,7 +150,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -141,7 +160,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -151,7 +170,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -161,7 +180,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -171,7 +190,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -181,7 +200,7 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td>13375</td>
@@ -191,13 +210,20 @@
       <td>9,95</td>
       <td>5,38</td>
       <td>6,62</td>
-      <td><a href="">http://www2.bec.gov.br</a></td>
+      <td>&nbsp;</td>
     </tr>
   </tbody>
 </table>
+
+    </div>
+
 </div>
 
-<div class="row mt-4">
+<div class="row justify-content-center mt-5">
+    <h3>Infográfico</h3>
+</div>
+
+<div class="row mt-2">
     <div class="col-lg">
         <div id="graph_comparativo_preco_medio" style="width: 500px; height: 400px; margin: 0 auto"></div>
     </div>
@@ -225,7 +251,6 @@ $(document).ready(function() {
 <script language = "JavaScript">
 
 function drawChart() {
-    chart1();
     chart2();
     chart3();
 }
