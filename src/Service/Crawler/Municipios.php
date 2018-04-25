@@ -1,14 +1,11 @@
 <?php
 
-namespace Command\Crawler;
+namespace Service\Crawler;
 
 use GuzzleHttp\Client;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
-class Municipios extends Command
+class Municipios
 {
     const URL_WIKIPEDIA = 'https://pt.wikipedia.org/wiki/Lista_de_regi%C3%B5es_geogr%C3%A1ficas_imediatas_de_S%C3%A3o_Paulo';
 
@@ -29,18 +26,11 @@ class Municipios extends Command
 
     public function __construct()
     {
-        parent::__construct();
         $this->client = new Client();
         $this->crawler = new Crawler();
     }
 
-    public function configure()
-    {
-        $this->setName('crawler:municipios')
-            ->setDescription('coleta as infos de municipios');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function getMunicipios()
     {
         $request = $this->client->get(self::URL_WIKIPEDIA);
         $this->crawler->addHtmlContent($request->getBody()->getContents());
@@ -58,6 +48,8 @@ class Municipios extends Command
             $this->acessaTabela($table, $index_regiao++);
         }
 
+        // retorna dados em array
+        return $this->regioes;
         /* teste para confirmar
         $total_cidades = 0;
         foreach ($this->regioes as $regiao) {
