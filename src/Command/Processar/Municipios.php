@@ -1,14 +1,12 @@
 <?php
 
-namespace Command\Processar;
+namespace Infoprecos\BEC\Command\Processar;
 
-use Service\Crawler\Municipios as ServiceMunicipios;
+use Infoprecos\BEC\Service\Crawler\Municipios as ServiceMunicipios;
 
-use GuzzleHttp\Client;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DomCrawler\Crawler;
 
 class Municipios extends Command
 {
@@ -16,13 +14,11 @@ class Municipios extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->client = new Client();
-        $this->crawler = new Crawler();
     }
 
     public function configure()
     {
-        $this->setName('crawler:municipios')
+        $this->setName('processar:municipios')
             ->setDescription('coleta as infos de municipios');
     }
 
@@ -47,6 +43,8 @@ class Municipios extends Command
 
         foreach ($regiao['cidades'] as $municipio) {
             // salvar dados $municipio
+            echo $municipio;
+            // TODO
         }
     }
 

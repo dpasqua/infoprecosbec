@@ -1,6 +1,6 @@
 <?php
 
-namespace Service\Crawler;
+namespace Infoprecos\BEC\Service\Crawler;
 
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
