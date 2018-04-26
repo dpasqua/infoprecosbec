@@ -17,7 +17,14 @@
      google.charts.load('current', {packages: ['corechart','line']});  
   </script>
 
-  <link rel="stylesheet" type="text/css" href="main.css">
+  <style>
+    .table-wrapper-2 {
+        display: block;
+        max-height: 400px;
+        overflow-y: auto;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+  </style>
 
 </head>
 <body>
@@ -70,19 +77,19 @@
     </form>
 </div>
 
+<hr />
 <div class="row mt-4">
 
-    <div class="col">
+    <div class="col-lg-6">
       <div id="googleMap" style="width:97%;height:400px;"></div>  
     </div>
 
-    <div class="col table-wrapper-2">
+    <div class="col-lg-6 table-wrapper-2 table-responsive">
 
-<table class="table table-condensed table-hover">
+<table class="table table-hover"">
   <thead class="thead-dark table-sm" style="font-size:14px;">
     <tr>
-      <th scope="col">COD UC</th>
-      <th scope="col">Órgão</th>
+      <th scope="col">COD UC - Órgão</th>
       <th scope="col">Qtd. OC</th>
       <th scope="col">Qtd. Unit.</th>
       <th scope="col">Valor Max. Unit.</th>
@@ -93,7 +100,6 @@
   </thead>
   <tbody>
     <tr class="table-warning">
-      <td>------</td>
       <td>Todos</td>
       <td>30</td>
       <td>50000</td>
@@ -103,8 +109,7 @@
       <td>-</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>Av. Mariana Ubaldina do Espírito Santo</td>
+      <td>13375 - Av. Mariana Ubaldina do Espírito Santo</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -113,8 +118,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF A</td>
+      <td>13375 - PREF A</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -123,8 +127,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF B</td>
+      <td>13375 - PREF B</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -133,8 +136,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF C</td>
+      <td>13375 - PREF C</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -143,8 +145,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF D</td>
+      <td>13375 - PREF D</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -153,8 +154,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF E</td>
+      <td>13375 - PREF E</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -163,8 +163,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF F</td>
+      <td>13375 - PREF F</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -173,8 +172,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF G</td>
+      <td>13375 - PREF G</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -183,8 +181,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF H</td>
+      <td>13375 - PREF H</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -193,8 +190,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF I</td>
+      <td>13375 - PREF I</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -203,8 +199,7 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>13375</td>
-      <td>PREF J</td>
+      <td>13375 - PREF J</td>
       <td>3</td>
       <td>1500</td>
       <td>9,95</td>
@@ -219,21 +214,55 @@
 
 </div>
 
-<div class="row justify-content-center mt-5">
+<hr />
+<div class="row justify-content-center mt-4">
     <h3>Infográfico</h3>
 </div>
 
 <div class="row mt-2">
-    <div class="col-lg">
-        <div id="graph_comparativo_preco_medio" style="width: 500px; height: 400px; margin: 0 auto"></div>
+    <div class="col-lg-4 align-self-center">
+        <p><h4 class="text-center">O valor de compra unitário mais baixo deste produto foi registrado em <b>Jan/2018</b> pelo valor de <span class="text-danger">R$ 4,56</span></h4></p>
     </div>
-    <div class="col-lg">
-        <div id="graph_comparativo_preco_medio_qtde_oc" style="width: 500px;eight: 400px; margin: 0 auto"></div>
+    <div class="col-lg-8">
+        <div id="graph_comparativo_preco_medio_qtde_oc" style="width: 700px; height: 300px; margin: 0 auto"></div>
     </div>
 </div>
 
 <div class="row">
-    <div id="graph_unidade_compradora_regiao" style="width: 750px;eight: 400px; margin: 0 auto"></div>
+    <div class="col-lg-7">
+        <div id="graph_unidade_compradora_regiao" style="width: 700px; height: 400px; margin: 0 auto"></div>
+    </div>
+
+    <div class="col-lg-3 align-self-center">
+        <p><h4 class="text-center">A localiade que mais comprou esse produto foi a região intermediária de <span class="text-success">São Paulo</span>, seguido pelas regiões de <span class="text-warning">Campinas</span> e <span class="text-danger">Marília</span></h4></p>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-lg-4 align-self-center">
+        <p><h4 class="text-center">Os órgãos do município de <span class="text-success">São Paulo</span> investiram juntos um montante de <span class="text-danger">R$10.000.000,00</span> no produto pesquisado.</h4>
+        </p>
+        <p><h4 class="text-center">Seu maior comprador é o Órgão <b>Prefeitura Municipal de São Paulo</b></h4></p>
+    </div>
+    <div class="col-lg-8">
+        <div id="graph_comparativo_preco_medio" style="width: 700px; height: 400px; margin: 0 auto"></div>
+    </div>
+</div>
+
+<hr />
+
+<div class="row justify-content-center mt-4">
+    <h3>Fornecedores</h3>
+</div>
+
+<div class="row">
+<p>No período pesquisado foram executados <b>32</b> OC (Ordens de Compra) para este produto no portal BEC. Participaram <b>53</b> diferentes fornecedores sendo <b>18</b> diferentes vencedores. </p>
+
+<ul>
+    <li>33 EPP/ME (62%)</li>
+    <li>20 Outros (38%)</li>
+</ul>
 </div>
 
 </div>
@@ -251,6 +280,7 @@ $(document).ready(function() {
 <script language = "JavaScript">
 
 function drawChart() {
+    chart1();
     chart2();
     chart3();
 }
@@ -277,7 +307,7 @@ function chart3() {
     // Set chart options
     var options = {
        'title':'Unidades Compradas por Região Geográfica',
-       'width':750,
+       'width':700,
        'height':400,
        is3D:true
     };
@@ -312,8 +342,8 @@ function chart2() {
        hAxis: {title: '2018'},
        seriesType: 'bars',
        series: {1: {type:'line'}, 2: {type: 'line'}},
-       width:500,
-       height:400,
+       width:700,
+       height:300,
        pointsVisible: true
     };
 
@@ -324,41 +354,36 @@ function chart2() {
 
 function chart1() {
     // Define the chart to be drawn.
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Month');
-    data.addColumn('number', 'Preço mais baixo licitado');
-    data.addColumn('number', 'Preço médio licitado');
-    data.addColumn('number', 'Seu preço médio');
-    data.addRows([
-       ['jan',  4.5, 6, 6],
-       ['fev',  5, 6, 6.50],
-       ['mar',  0,  6, 8],
-       ['abr',  14.5, 11.3, 8.4],
-       ['mai',  18.2, 17.0, 13.5],
-       ['jun',  21.5, 22.0, 17.0],
-       ['jul',  25.2, 24.8, 18.6],
-       ['ago',  26.5, 24.1, 17.9],
-       ['set',  23.3, 20.1, 14.3],
-       ['out',  18.3, 14.1, 9.0],
-       ['nov',  13.9,  8.6, 3.9],
-       ['dez',  9.6,  2.5,  1.0]
+    var data = google.visualization.arrayToDataTable([
+        ['Cidade', 'Valores', { role: 'style' }],
+        ['São Paulo', 10000000, '#7030A0'],
+        ['Osasco', 7500000, '#0F2D69'],
+        ['Campinas', 5500000, '#89BC01'],
+        ['Jundiaí', 4000000, '#00B0F0'],
+        ['Guarulhos', 1500000, '#00B050'],
+        ['Ribeirão Preto', 1000000, '#92D050'],
+        ['São Bernardo do Campo', 800000, '#FFFF00'],
+        ['Bauru', 500000, '#FFC000'],
+        ['Sorocaba', 200000, '#FF0000'],
+        ['Americana', 100000, '#C74444']
     ]);
        
     // Set chart options
-    var options = {'title' : 'Comparativo de preços médios praticados',
+    var options = {'title' : 'Top 10 Municípios que mais compraram',
        hAxis: {
-          title: '2018'
+          title: 'Valores'
        },
        vAxis: {
-          title: 'Valores em Reais'
+          title: 'Municípios'
        },   
-       'width':500,
+       'width':700,
        'height':400,
+       'legend': {position: 'none'},
        pointsVisible: true
     };
 
     // Instantiate and draw the chart.
-    var chart = new google.visualization.LineChart(document.getElementById('graph_comparativo_preco_medio'));
+    var chart = new google.visualization.BarChart(document.getElementById('graph_comparativo_preco_medio'));
     chart.draw(data, options);
 }
     google.charts.setOnLoadCallback(drawChart);
