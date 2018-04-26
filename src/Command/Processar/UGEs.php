@@ -24,7 +24,18 @@ class UGEs extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $crawler_uges = new UGE();
-        $crawler_uges->getUGEs();
+        $municipios = $crawler_uges->getUGEs();
 
+        foreach ($municipios as $municipio) {
+            $this->processaMunicipio($municipio);
+        }
     }
+
+    private function processaMunicipio(array $municipio) {
+        echo "\n\n" . $municipio['codigo'] . " --> " . $municipio['nome'] . "\n";
+        foreach ($municipio['orgaos'] as $orgao) {
+            print_r($orgao);
+        }
+    }
+
 }
