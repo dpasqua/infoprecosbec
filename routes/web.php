@@ -17,3 +17,5 @@ $router->get('/', function () use ($router) {
 
 $router->get('becprecos',  ['uses' => 'BecprecosController@index']);
 $router->get('becprecos/auto-prefeituras',  ['uses' => 'BecprecosController@autoCompletePrefeituras']);
+$router->get('becprecos/auto-produtos',  ['uses' => 'BecprecosController@autoCompleteProdutos']);
+$router->post('becprecos/buscar',  ['uses' => 'BecprecosController@buscarReferencias']);
