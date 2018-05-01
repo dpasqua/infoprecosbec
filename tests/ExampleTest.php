@@ -14,8 +14,10 @@ class ExampleTest extends TestCase
     {
         $this->get('/');
 
+        $contents = $this->response->getContent();
         $this->assertEquals(
-            $this->app->version(), $this->response->getContent()
+            //$this->app->version(), $this->response->getContent()
+            "<!DOCTYPE html>\n<html lan", substr($contents, 0, 25)
         );
     }
 }
