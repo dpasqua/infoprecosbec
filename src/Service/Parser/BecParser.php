@@ -96,6 +96,29 @@ class BecParser
         return $orgaos;
     }
 
+    /**
+     * retorna tabela de dados de uma UC/UGE
+     * @return array
+     */
+    public function getTableUGE()
+    {
+        $trs = $this->crawler->filterXPath('//div[@id="divTela"]/div/table/tr[position()>2]');
+        return [
+            'uge' => $trs->eq(0)->filterXPath('//td/input')->eq(0)->attr('value'),
+            'orgao' => $trs->eq(1)->filterXPath('//td/input')->eq(0)->attr('value'),
+            'gestao' => $trs->eq(2)->filterXPath('//td/input')->eq(0)->attr('value'),
+            'nome' => trim($trs->eq(3)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'endereco' => trim($trs->eq(4)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'municipio' => trim($trs->eq(5)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'cep' => trim($trs->eq(6)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'email' => trim($trs->eq(7)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'primeiro_telefone' => trim($trs->eq(8)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'segundo_telefone' => trim($trs->eq(9)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'fax' => trim($trs->eq(10)->filterXPath('//td/input')->eq(0)->attr('value')),
+            'cnpj' => trim($trs->eq(11)->filterXPath('//td/input')->eq(0)->attr('value')),
+        ];
+    }
+
     public function getHtml()
     {
         return $this->crawler->html();

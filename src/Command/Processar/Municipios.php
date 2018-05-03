@@ -34,9 +34,12 @@ class Municipios extends Command
             $this->processaRegiao($regiao);
         }
 
+        // deixar municipios com nome igual a site do BEC
+        $this->fixMunicipios();
     }
 
-    private function processaRegiao(array $regiao) {
+    private function processaRegiao(array $regiao)
+    {
         $regiao_nome = Formatter::maiusculo($regiao['nome']);
         // salvar regiao
         $regiao_model = new Regiao();
@@ -53,6 +56,21 @@ class Municipios extends Command
             $municipio_model->nome = $nome;
             $municipio_model->save();
         }
+    }
+
+    private function fixMunicipios()
+    {
+        $municipio_model = Municipio::where('nome', '=', 'MOGI MIRIM')->first();
+        $municipio_model->nome = 'MOGI-MIRIM';
+        $municipio_model->save();
+
+        $municipio_model = Municipio::where('nome', '=', 'MOGI GUACU')->first();
+        $municipio_model->nome = 'MOGI-GUACU';
+        $municipio_model->save();
+
+        $municipio_model = Municipio::where('nome', '=', 'LUIZ ANTONIO')->first();
+        $municipio_model->nome = 'LUIS ANTONIO';
+        $municipio_model->save();
     }
 
 }
