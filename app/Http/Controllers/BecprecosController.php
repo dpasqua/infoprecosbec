@@ -12,16 +12,11 @@ class BecprecosController extends Controller
      */
     public function autoCompletePrefeituras()
     {
-        $data = [
-            'PREF A',
-            'PREF B',
-            'PREF C',
-            'PREF D',
-            'PREF E',
-            'PREF F',
-            'PREF G',
-            'PREF H',
-        ];
+        $prefeituras = DB::select('select nome from uges');
+        $data = [];
+        foreach($prefeituras as $prefeitura) {
+            $data[$prefeitura->nome] = null;
+        }
         return response()->json($data);
     }
 
@@ -37,7 +32,11 @@ class BecprecosController extends Controller
             return $reg['nome'];
         }, $produtos);
 
-        return response()->json($produtos);
+        $return = [];
+        foreach($produtos as $produto) {
+            $return[$produto] = null;
+        }
+        return response()->json($return);
     }
 
     /**
@@ -90,19 +89,11 @@ class BecprecosController extends Controller
     private function pegaChart1Dados()
     {
         $dados = [
-            ['', 'Qtd. OC', 'Preço mais baixo licitado', 'Preço médio licitado'],
-            ['jan',  20, 6, 6],
-            ['fev',  30, 6, 6.50],
-            ['mar',  40,  6, 8],
-            ['abr',  50, 11.3, 8.4],
-            ['mai',  30, 17.0, 13.5],
-            ['jun',  20, 22.0, 17.0],
-            ['jul',  35, 24.8, 18.6],
-            ['ago',  45, 24.1, 17.9],
-            ['set',  55, 20.1, 14.3],
-            ['out',  60, 14.1, 9.0],
-            ['nov',  48,  8.6, 3.9],
-            ['dez',  30,  2.5,  1.0]
+            'qtde_oc' => [20, 30, 40, 50, 30, 20, 35, 45, 55, 60, 48, 30],
+            'preco_min' => [ 6, 6, 6, 11.3, 17, 22, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5 ],
+            'preco_medio' => [ 6, 6.5, 8, 8.4, 13.5, 17, 18.6, 17.9, 14.3, 9, 3.9, 1 ],
+            'bgcolor' => array_fill(0, 12, 'rgba(54, 162, 235, 0.2)'),
+            'labels' => [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez' ],
         ];
         return $dados;
     }
@@ -113,17 +104,19 @@ class BecprecosController extends Controller
     private function pegaChart2Dados()
     {
         $dados = [
-            ['São Paulo', 45.0],
-            ['Sorocaba', 26.8],  
-            ['Bauru', 12.8],
-            ['Marília', 8.5],
-            ['Presidente Prudente', 6.2],
-            ['Araçatuba', 0.7],
-            ['São José do Rio Preto', 0.7],
-            ['Ribeirão Preto', 0.7],
-            ['Araraquara', 0.7],
-            ['Campinas', 0.7],
-            ['São José dos Campos', 0.7],
+            'labels' => [
+                'São Paulo',
+                'Sorocaba',
+                'Bauru',
+                'Marília',
+                'Presidente Prudente',
+                'Araçatuba',
+                'São José do Rio Preto',
+                'Ribeirão Preto',
+                'Araraquara',
+                'Campinas',
+                'São José dos Campos'],
+            'porcentagem' => [ 45, 26.8, 12.8, 8.5, 6.2, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7 ],
         ];
 
         return $dados;
@@ -135,16 +128,8 @@ class BecprecosController extends Controller
     private function pegaChart3Dados()
     {
         $dados = [
-            ['São Paulo', 10000000, '#7030A0'],
-            ['Osasco', 7500000, '#0F2D69'],
-            ['Campinas', 5500000, '#89BC01'],
-            ['Jundiaí', 4000000, '#00B0F0'],
-            ['Guarulhos', 1500000, '#00B050'],
-            ['Ribeirão Preto', 1000000, '#92D050'],
-            ['São Bernardo do Campo', 800000, '#FFFF00'],
-            ['Bauru', 500000, '#FFC000'],
-            ['Sorocaba', 200000, '#FF0000'],
-            ['Americana', 100000, '#C74444']
+            'data' => [ 10000000, 7500000, 5500000, 4000000, 1500000, 1000000, 800000, 500000, 200000, 100000 ],
+            'labels' => [ 'São Paulo', 'Osasco', 'Campinas', 'Jundiaí', 'Guarulhos', 'Ribeirão Preto', 'São Bernardo do Campo', 'Bauru', 'Sorocaba', 'Americana' ]
         ];
         return $dados;
     }

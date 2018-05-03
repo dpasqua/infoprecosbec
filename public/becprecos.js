@@ -116,10 +116,13 @@ class BecPrecos
 		// limpa class de todas tr
 		$('#myTable tr').each(function(i, row) {
 			var $row = $(row);
-			$row.removeClass('table-success');			
+			$row.removeClass('lime');
+			$row.removeClass('lighten-4');
 		})
+
 		// marca tr
-		$('#myTable tr:eq(' + idx + ')').addClass('table-success');
+		$('#myTable tr:eq(' + idx + ')').addClass('lime');
+		$('#myTable tr:eq(' + idx + ')').addClass('lighten-4');
 	}
 
 	/* preenche tabela */
@@ -142,76 +145,154 @@ class BecPrecos
 	  this.selecionaTableRow(2);
 	}
 
-	/* grafico comparativo precos medios*/
-	chart1(dataTable) 
+	// chart1
+	newChart1(ctx, dataChart)
 	{
-		// Define the chart to be drawn.
-		var data = google.visualization.arrayToDataTable(dataTable);
-		  
-		// Set chart options
-		var options = {
-			title : 'Comparativo de preços médios praticados relacionado a quantidade de OCs',
-			vAxis: {title: 'Valores em Reais'},
-			hAxis: {title: '2018'},
-			seriesType: 'bars',
-			series: {1: {type:'line'}, 2: {type: 'line'}},
-			width:700,
-			height:300,
-			pointsVisible: true
-		};
-
-	    // Instantiate and draw the chart.
-	    var chart = new google.visualization.ComboChart(this.document.getElementById('graph_comparativo_preco_medio_qtde_oc'));
-	    chart.draw(data, options);
+		var mixedChart = new Chart(ctx, {
+            type: 'bar',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    stacked: true }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                },
+                title: {
+                    display: true,
+                    text: 'Comparativo de preços médios praticados relacionado a quantidade de OCs'
+                }
+            },
+            data: {
+                datasets: [
+                    {
+                        label: 'Qtd. OC',
+                        data: dataChart.qtde_oc,
+                        backgroundColor: dataChart.bgcolor,
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                    },
+                    {
+                        label: 'Preço mais baixo licitado',
+                        data: dataChart.preco_min,
+                        type: 'line',
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                    },
+                    {
+                        label: 'Preço médio licitado',
+                        data: dataChart.preco_medio,
+                        type: 'line',
+                        borderColor: [
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                    }
+                ],
+                labels: dataChart.labels
+            }
+        });
 	}
 
-	/* grafico unidades compradas por regiao geografica */
-	chart2(tableData) 
+	// chart2
+	newChart2(ctx2, dataChart)
 	{
-		// Define the chart to be drawn.
-		var data = new google.visualization.DataTable();
-		data.addColumn('string', 'Browser');
-		data.addColumn('number', 'Percentage');
-		data.addRows(tableData);
-		   
-		// Set chart options
-		var options = {
-		   'title':'Unidades Compradas por Região Geográfica',
-		   'width':700,
-		   'height':400,
-		   is3D:true
-		};
-
-		// Instantiate and draw the chart.
-		var chart = new google.visualization.PieChart(this.document.getElementById('graph_unidade_compradora_regiao'));
-		chart.draw(data, options);
+	   var myPieChart = new Chart(ctx2,{
+	        type: 'pie',
+	        responsive: true,
+	        maintainAspectRatio: true,
+	        options: {
+	            legend: {
+	                display: true
+	            },
+	            title: {
+	                display: true,
+	                text: 'Unidades Compradas por Região Geográfica'
+	            },
+	            labels: ['label'],
+	            tooltips: {
+	                mode: 'index',
+	                callbacks: {
+	                    afterLabel: function(tooltipItem, data) {
+	                        var sum = data.datasets.reduce((sum, dataset) => {
+	                            return sum + dataset.data[tooltipItem.index];
+	                        }, 0);
+	                        var percent = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / sum * 100;
+	                        percent = percent.toFixed(2); // make a nice string
+	                        return data.datasets[tooltipItem.datasetIndex].label + ': ' + percent + '%';
+	                    }
+	                }
+	            }
+	        },
+	        data: {
+	            datasets: [
+	                {
+	                    label:  [
+	                        'Porcentagem'
+	                    ],
+	                    data: dataChart.porcentagem,
+	                    backgroundColor: [
+	                        'blue',
+	                        'red',
+	                        'orange',
+	                        'green',
+	                        'purple',
+	                        'cyan',
+	                        'pink',
+	                        'darkGreen',
+	                        'darkRed',
+	                        'darkBlue',
+	                        'grey'
+	                    ]
+	                }
+	            ],
+	            labels: dataChart.labels
+	        }
+	    });
 	}
 
-	chart3(dataTable) 
+	// chart3
+	newChart3(ctx3, dataChart)
 	{
-		// data the chart to be drawn.
-		var dataTableHeader = [ ['Cidade', 'Valores', { role: 'style' }] ];
-
-		var data = google.visualization.arrayToDataTable(
-		  dataTableHeader.concat(dataTable)
-		);
-		   
-		// Set chart options
-		var options = {'title' : 'Top 10 Municípios que mais compraram',
-		   hAxis: {
-		      title: 'Valores'
-		   },
-		   vAxis: {
-		      title: 'Municípios'
-		   },   
-		   'width':700,
-		   'height':400,
-		   'legend': {position: 'none'},
-		   pointsVisible: true
-		};
-
-		// Instantiate and draw the chart.
-		var chart = new google.visualization.BarChart(this.document.getElementById('graph_comparativo_preco_medio'));
-		chart.draw(data, options);
+		var myBarChart = new Chart(ctx3, {
+		    type: 'horizontalBar',
+		    responsive: true,
+		    maintainAspectRatio: true,
+		    options: {
+		        legend: {
+		            display: false,
+		        },
+		        title: {
+		            display: true,
+		            text: 'Top 10 municípios que mais compraram'
+		        }
+		    },
+		    data: {
+		        datasets: [
+		            {
+		                data: dataChart.data,
+		                backgroundColor: [
+		                    '#7030A0',
+		                    '#0F2D69',
+		                    '#89BC01',
+		                    '#00B0F0',
+		                    '#00B050',
+		                    '#92D050',
+		                    '#FFFF00',
+		                    '#FFC000',
+		                    '#FF0000',
+		                    '#C74444'
+		                ],
+		                borderColor: [
+		                    'rgba(54, 162, 235, 1)'
+		                ],
+		            }
+		        ],
+		        labels: dataChart.labels
+		    },
+		});
 	}
 }
