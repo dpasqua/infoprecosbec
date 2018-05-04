@@ -18,9 +18,14 @@ class UGE extends Model
         return $this->belongsTo(Municipio::class, 'id_municipio');
     }
 
-    public function Orgao()
+    public function orgao()
     {
         return $this->belongsTo(Orgao::class, 'id_orgao');
+    }
+
+    public function oc()
+    {
+        return $this->hasMany(OC::class, 'id_uge');
     }
 
 }

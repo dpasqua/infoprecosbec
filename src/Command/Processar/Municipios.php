@@ -58,6 +58,7 @@ class Municipios extends Command
         }
     }
 
+    // ajustar nomes para ficar como no portal
     private function fixMunicipios()
     {
         $municipio_model = Municipio::where('nome', '=', 'MOGI MIRIM')->first();
@@ -70,6 +71,17 @@ class Municipios extends Command
 
         $municipio_model = Municipio::where('nome', '=', 'LUIZ ANTONIO')->first();
         $municipio_model->nome = 'LUIS ANTONIO';
+        $municipio_model->save();
+
+        $regiao = new Regiao();
+        $regiao->codigo = '5301';
+        $regiao->nome = 'DISTRITO FEDERAL';
+        $regiao->save();
+
+        $municipio_model = new Municipio();
+        $municipio_model->id_regiao = $regiao->id;
+        $municipio_model->codigo = '9001';
+        $municipio_model->nome = 'MUNICIPIO BRASILIA';
         $municipio_model->save();
     }
 

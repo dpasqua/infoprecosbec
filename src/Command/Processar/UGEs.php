@@ -43,9 +43,6 @@ class UGEs extends Command
     private function processaMunicipio(array $municipio) {
         echo "\n\n" . $municipio['codigo'] . " --> " . $municipio['nome'] . "\n";
         foreach ($municipio['orgaos'] as $uc => $uge) {
-            if (strpos($municipio['nome'], 'BRASILIA') !== false) {
-                continue;
-            }
             $this->processaUGE($uc, $uge, $municipio);
         }
     }
