@@ -25,18 +25,12 @@ class BecprecosController extends Controller
      */
     public function autoCompleteProdutos()
     {
-        $produtos = DB::select('select nome from produto');
-        $produtos = json_decode(json_encode($produtos), true);
-
-        $produtos = array_map(function ($reg) {
-            return $reg['nome'];
-        }, $produtos);
-
-        $return = [];
+        $produtos = DB::select('select desc_item from produtos where qtd_oc >= 5');
+        $data = [];
         foreach($produtos as $produto) {
-            $return[$produto] = null;
+            $data[$produto->desc_item] = null;
         }
-        return response()->json($return);
+        return response()->json($data);
     }
 
     /**

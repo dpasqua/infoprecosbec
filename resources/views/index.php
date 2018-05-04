@@ -63,7 +63,8 @@
                                                 <div class="input-field col s12 m6 l4">
                                                     <i class="material-icons prefix">location_searching</i>
                                                     <select name="raio" class="form-control" id="selectRaio">
-                                                        <option>Livre</option>
+                                                        <option value="5000">5km</option>
+                                                        <option value="10000">10km</option>
                                                         <option value="25000">25km</option>
                                                         <option value="50000">50km</option>
                                                         <option value="100000">100km</option>

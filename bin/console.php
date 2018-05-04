@@ -17,6 +17,7 @@ $container = $builder->build();
 // application setup
 $app = new Application();
 $app->add($container->get('Infoprecos\BEC\Command\API\OCs'));
+$app->add($container->get('Infoprecos\BEC\Command\API\Produtos'));
 $app->add($container->get('Infoprecos\BEC\Command\Processar\Municipios'));
 $app->add($container->get('Infoprecos\BEC\Command\Processar\UGEs'));
 $app->add($container->get('Infoprecos\BEC\Command\Processar\Coordenadas'));

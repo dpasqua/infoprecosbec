@@ -58,6 +58,12 @@ class BecPrecos
 		});
 
 		switch(_raio) {
+			case 5000:
+				this.map.setZoom(12);
+				break;
+			case 10000:
+				this.map.setZoom(11);
+				break;
 			case 25000:
 				this.map.setZoom(10);
 				break;
