@@ -3,7 +3,7 @@ class BecPrecos
     constructor(document)
     {
         // global
-        this.markers = [];
+        this.markerCluster = null;
         this.map = null;
         this.raio = null;
         this.center = null;
@@ -92,11 +92,11 @@ class BecPrecos
     /* gera marks no mapa*/
     geraMarks(points)
     {
-        this.markers.forEach(m => {
-            m.setMap(null);
-        });
+        if(this.markerCluster != null) {
+            this.markerCluster.clearMarkers();
+        }
 
-        this.markers = [];
+        var markers = [];
         var self = this;
         points.forEach(p => {
             var pi = new google.maps.LatLng(p[0], p[1]);
@@ -110,10 +110,10 @@ class BecPrecos
                 self.selecionaTableRow(p[3] + 1);
             });
 
-            this.markers.push(m);
+            markers.push(m);
         })
 
-        var markerCluster = new MarkerClusterer(this.map, this.markers,
+        this.markerCluster = new MarkerClusterer(this.map, markers,
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     }
 

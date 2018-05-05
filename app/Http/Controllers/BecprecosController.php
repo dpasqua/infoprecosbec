@@ -177,7 +177,6 @@ class BecprecosController extends Controller
     private function pegaTableDados(array $input, $ocs)
     {
         $coordenadas_uc = QuerySQL::coordenadas($input['uc']);
-        //var_dump($coordenadas_uc);
 
         $dados = [];
         $dados[] = ['Todos', 30, 50000, '10,18', '4,56', '6,84', '-'];
@@ -212,7 +211,7 @@ class BecprecosController extends Controller
                 $oc->lat, $oc->log, $oc->nome, $count++
             ];
         }
-        
+
         $mapa['points'] = $points;
         return $mapa;         
     }

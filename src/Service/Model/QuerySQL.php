@@ -19,7 +19,7 @@ class QuerySQL
      * @param $dt_final
      * @return array
      */
-    public static function valoresOCs($codigo, $dt_inicial, $dt_final)
+    public static function valoresOCs($codigo, $dt_inicial, $dt_final, $uc_nome = null)
     {
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
@@ -34,18 +34,29 @@ class QuerySQL
             from uges u
             inner join ocs o on u.id=o.id_uge
             inner join itens i on o.id = i.id_oc
-            where i.codigo= :codigo
+            where i.codigo = :codigo';
+
+        if($uc_nome) {
+            $sql .= ' AND u.nome = :nome';
+        }
+
+        $sql .= '
             AND dt_encerramento BETWEEN :dt_inicial AND :dt_final
             GROUP BY u.id
             ORDER BY u.nome
         ';
 
-        $result = DB::select(DB::raw($sql), 
-            [
+        $where = [
                 'codigo' => $codigo,
                 'dt_inicial' => $dt_inicial, 
-                'dt_final' => $dt_final
-            ]);
+                'dt_final' => $dt_final,
+            ];
+
+        if($uc_nome) {
+            $where['nome'] = $uc_nome;
+        }
+
+        $result = DB::select(DB::raw($sql), $where);
         return $result;
     }
 
