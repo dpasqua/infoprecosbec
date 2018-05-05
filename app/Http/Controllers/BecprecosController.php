@@ -10,20 +10,20 @@ use Infoprecos\BEC\Service\Model\QuerySQL;
 class BecprecosController extends Controller
 {
 
-    /** 
+    /**
      * autocomplete prefeitura
      */
     public function autoCompletePrefeituras()
     {
         $prefeituras = DB::select('select nome from uges');
         $data = [];
-        foreach($prefeituras as $prefeitura) {
+        foreach ($prefeituras as $prefeitura) {
             $data[$prefeitura->nome] = null;
         }
         return response()->json($data);
     }
 
-    /** 
+    /**
      * autocomplete prefeitura
      */
     public function autoCompleteProdutos()
@@ -40,7 +40,7 @@ class BecprecosController extends Controller
      * buscar referencias
      */
     public function buscarReferencias(Request $request)
-    { 
+    {
         $input = $request->all();
 
         // pega o codigo do produto
@@ -65,14 +65,17 @@ class BecprecosController extends Controller
             'chart1' => $this->pegaChart1Dados(),
             'chart2' => $this->pegaChart2Dados(),
             'chart3' => $this->pegaChart3Dados(),
+            'chart4' => $this->pegaChart4Dados(),
+            'chart5' => $this->pegaChart5Dados(),
             'infoGeral' => $this->pegaInfoGeral(),
+            'tableFornecedor' => $this->pegaTableFornecedorDados()
         ];
         return response()->json($data);
     }
 
     /**
      * dados gerais
-     */     
+     */
     private function pegaInfoGeral()
     {
         $dados = [
@@ -96,15 +99,25 @@ class BecprecosController extends Controller
 
     /**
      * comparativo de preços médios
-     */    
+     */
     private function pegaChart1Dados()
     {
         $dados = [
             'qtde_oc' => [20, 30, 40, 50, 30, 20, 35, 45, 55, 60, 48, 30],
-            'preco_min' => [ 6, 6, 6, 11.3, 17, 22, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5 ],
-            'preco_medio' => [ 6, 6.5, 8, 8.4, 13.5, 17, 18.6, 17.9, 14.3, 9, 3.9, 1 ],
+            'preco_min' => [6, 6, 6, 11.3, 17, 22, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5],
+            'preco_medio' => [6, 6.5, 8, 8.4, 13.5, 17, 18.6, 17.9, 14.3, 9, 3.9, 1],
             'bgcolor' => array_fill(0, 12, 'rgba(54, 162, 235, 0.2)'),
-            'labels' => [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez' ],
+            'labels' => ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        ];
+        return $dados;
+    }
+
+    private function pegaChart4Dados()
+    {
+        $dados = [
+            'qtde_oc' => [20, 30, 40, 50, 30, 20, 35, 45, 55, 60, 48],
+            'bgcolor' => array_fill(0, 11, 'rgba(54, 162, 235, 0.2)'),
+            'labels' => ['12345678901', '1234 67890', '12345678901', '12 4567 90', '1234567890 ', '123 567890', '1234567890 ', '12345 7890', '1234567890 ', '12345 78901', '12345678901'],
         ];
         return $dados;
     }
@@ -127,7 +140,7 @@ class BecprecosController extends Controller
                 'Araraquara',
                 'Campinas',
                 'São José dos Campos'],
-            'porcentagem' => [ 45, 26.8, 12.8, 8.5, 6.2, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7 ],
+            'porcentagem' => [45, 26.8, 12.8, 8.5, 6.2, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
         ];
 
         return $dados;
@@ -139,8 +152,21 @@ class BecprecosController extends Controller
     private function pegaChart3Dados()
     {
         $dados = [
-            'data' => [ 10000000, 7500000, 5500000, 4000000, 1500000, 1000000, 800000, 500000, 200000, 100000 ],
-            'labels' => [ 'São Paulo', 'Osasco', 'Campinas', 'Jundiaí', 'Guarulhos', 'Ribeirão Preto', 'São Bernardo do Campo', 'Bauru', 'Sorocaba', 'Americana' ]
+            'data' => [10000000, 7500000, 5500000, 4000000, 1500000, 1000000, 800000, 500000, 200000, 100000],
+            'labels' => ['São Paulo', 'Osasco', 'Campinas', 'Jundiaí', 'Guarulhos', 'Ribeirão Preto', 'São Bernardo do Campo', 'Bauru', 'Sorocaba', 'Americana']
+        ];
+        return $dados;
+    }
+
+    private function pegaChart5Dados()
+    {
+        $dados = [
+            'labels' => [
+                'Cooperativas',
+                'EPP',
+                'ME',
+                'Outros'],
+            'porcentagem' => [45, 26.8, 12.8, 10],
         ];
         return $dados;
     }
@@ -186,8 +212,23 @@ class BecprecosController extends Controller
                 $oc->lat, $oc->log, $oc->nome, $count++
             ];
         }
-
+        
         $mapa['points'] = $points;
         return $mapa;         
+    }
+
+    private function pegaTableFornecedorDados()
+    {
+        $dados = [
+            ['AAAAAAA', '00.000.000/0001-00', 50000, '10,18', '10'],
+            ['BBBBBBB', '00.000.000/0002-00', 50000, '10,18', '20'],
+            ['CCCCCCC', '00.000.000/0003-00', 50000, '10,18', '30'],
+            ['DDDDDDD', '00.000.000/0004-00', 50000, '10,18', '40'],
+            ['EEEEEE', '00.000.000/00005-00', 50000, '10,18', '50'],
+            ['FFFFFF', '00.000.000/0006-00', 50000, '10,18', '60'],
+            ['GGGGGG', '00.000.000/0007-00', 50000, '10,18', '70'],
+        ];
+
+        return $dados;
     }
 }
