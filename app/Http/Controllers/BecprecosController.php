@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Author;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Infoprecos\BEC\Service\Char\Formatter;
+use Infoprecos\BEC\Service\Model\QuerySQL;
 
 class BecprecosController extends Controller
 {
@@ -40,11 +42,13 @@ class BecprecosController extends Controller
     { 
         $input = $request->all();
 
-        //print_r($input);
+        // $input['produto'] $input['uc'] $input['data_inicial'] $input['data_final'] $input['raio']
+
+        $table = $this->pegaTableDados($input);
 
         $data = [
             'mapa' => $this->pegaMapaDados($input['raio']),
-            'table' => $this->pegaTableDados(),
+            'table' => $table,
             'chart1' => $this->pegaChart1Dados(),
             'chart2' => $this->pegaChart2Dados(),
             'chart3' => $this->pegaChart3Dados(),
@@ -131,8 +135,14 @@ class BecprecosController extends Controller
     /**
      * dados da tabela
      */
-    private function pegaTableDados()
+    private function pegaTableDados(array $input)
     {
+        $coordenadas_uc = QuerySQL::queryCoordenadas($input['uc']);
+        //$ucs = QuerySQL::queryUGEsRaio($coordenadas_uc, $input['raio']);
+
+        // pegar UGES no raio com OCs dentro de datas especificadas
+        $ocs = QuerySQL::queryOCs($input['data_inicial'], $input['data_final']);
+
         $dados = [
             ['Todos', 30, 50000, '10,18', '4,56', '6,84', '-'],
             ['13374 -  Av. Mariana Ubaldina do Espírito Santo', 30, 50000, '10,18', '4,56', '6,84', '-'],

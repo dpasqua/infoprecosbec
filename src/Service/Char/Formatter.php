@@ -19,4 +19,9 @@ class Formatter
         return $string;
     }
 
+    public static function formataDataParaMySQL($dt)
+    {
+        return implode('-', array_reverse(explode('/', $dt)));
+    }
+
 }
