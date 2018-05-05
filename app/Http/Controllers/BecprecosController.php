@@ -27,10 +27,10 @@ class BecprecosController extends Controller
      */
     public function autoCompleteProdutos()
     {
-        $produtos = DB::select('select desc_item from produtos where qtd_oc >= 5');
+        $produtos = DB::select('select codigo, desc_item from produtos where qtd_oc >= 20');
         $data = [];
         foreach($produtos as $produto) {
-            $data[$produto->desc_item] = null;
+            $data[$produto->codigo . ' - ' . $produto->desc_item] = null;
         }
         return response()->json($data);
     }

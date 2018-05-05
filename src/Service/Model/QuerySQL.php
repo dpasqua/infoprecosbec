@@ -11,7 +11,7 @@ class QuerySQL
     {
         $sql = 'SELECT AsText(`coordenadas`) AS coordenadas FROM uges WHERE nome = \'' . $uge_nome . '\'';
         $result = DB::select($sql);
-        return $result[0]['coordenadas'];
+        return $result[0]->coordenadas;
     }
 
     //public static function queryUGEsRaio($raio)
@@ -27,7 +27,7 @@ class QuerySQL
         $sql = 'select * from ocs where dt_encerramento between \'' . $dt_inicial . '\' and \'' . $dt_final . '\'';
 
         $result = DB::select($sql);
-        var_dump($result);
+       // var_dump($result);
     }
 
 

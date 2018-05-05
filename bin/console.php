@@ -22,5 +22,6 @@ $app->add($container->get('Infoprecos\BEC\Command\API\OCDetalhes'));
 $app->add($container->get('Infoprecos\BEC\Command\Processar\Municipios'));
 $app->add($container->get('Infoprecos\BEC\Command\Processar\UGEs'));
 $app->add($container->get('Infoprecos\BEC\Command\Processar\Coordenadas'));
+$app->add($container->get('Infoprecos\BEC\Command\Processar\Produtos'));
 $app->run();
 
