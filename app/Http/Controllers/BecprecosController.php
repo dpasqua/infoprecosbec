@@ -9,6 +9,7 @@ use Infoprecos\BEC\Service\Model\QuerySQL;
 
 class BecprecosController extends Controller
 {
+
     /** 
      * autocomplete prefeitura
      */
@@ -137,21 +138,18 @@ class BecprecosController extends Controller
      */
     private function pegaTableDados(array $input)
     {
-        $coordenadas_uc = QuerySQL::queryCoordenadas($input['uc']);
-        //$ucs = QuerySQL::queryUGEsRaio($coordenadas_uc, $input['raio']);
+        $coordenadas_uc = QuerySQL::coordenadas($input['uc']);
+        //var_dump($coordenadas_uc);
 
         // pegar UGES no raio com OCs dentro de datas especificadas
-        $ocs = QuerySQL::queryOCs($input['data_inicial'], $input['data_final']);
+        $ocs = QuerySQL::valoresOCs($input['data_inicial'], $input['data_final']);
+        //var_dump($ocs); die;
+        $dados = [];
 
-        $dados = [
-            ['Todos', 30, 50000, '10,18', '4,56', '6,84', '-'],
-            ['13374 -  Av. Mariana Ubaldina do Espírito Santo', 30, 50000, '10,18', '4,56', '6,84', '-'],
-            ['13375 - PREF A', 30, 50000, '10,18', '4,56', '6,84', '-'],
-            ['13376 - PREF B', 30, 50000, '10,18', '4,56', '6,84', '-'],
-            ['13377 - PREF C', 30, 50000, '10,18', '4,56', '6,84', '-'],
-            ['13378 - PREF D', 30, 50000, '10,18', '4,56', '6,84', '-'],
-            ['13379 - PREF E', 30, 50000, '10,18', '4,56', '6,84', '-'],
-        ];
+        $dados[] = ['Todos', 30, 50000, '10,18', '4,56', '6,84', '-'];
+        foreach ($ocs as $oc) {
+            $dados[] = [$oc->uc . ' - ' . $oc->nome_uc, 30, 50000, '10,18', '4,56', '6,84', '-'];
+        }
 
         return $dados;
     }

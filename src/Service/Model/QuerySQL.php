@@ -7,31 +7,109 @@ use Infoprecos\BEC\Service\Char\Formatter;
 
 class QuerySQL
 {
-    public static function queryCoordenadas($uge_nome)
+    public static function coordenadas($uge_nome)
     {
         $sql = 'SELECT AsText(`coordenadas`) AS coordenadas FROM uges WHERE nome = \'' . $uge_nome . '\'';
         $result = DB::select($sql);
-        return $result[0]['coordenadas'];
+        return $result[0]->coordenadas;
     }
 
-    //public static function queryUGEsRaio($raio)
-    //{
-    //
-    //}
-
-    public static function queryOCs($dt_inicial, $dt_final)
+    /**
+     * @param $dt_inicial
+     * @param $dt_final
+     * @return array
+     */
+    public static function valoresOCs($dt_inicial, $dt_final)
     {
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select * from ocs where dt_encerramento between \'' . $dt_inicial . '\' and \'' . $dt_final . '\'';
+        $sql = 'select  u.id as id_uge, u.uc, u.nome as nome_uc, u.endereco,
+                AsText(u.coordenadas) as coordenadas, o.codigo as oc,
+                o.dt_encerramento as dt_encerramento
+                from uges u
+                left join ocs o on u.id = o.id_uge
+                where dt_encerramento between :dt_inicial and :dt_final';
 
-        $result = DB::select($sql);
-        var_dump($result);
+        $result = DB::select(DB::raw($sql), ['dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result;
     }
 
-
+    //// coordenadas raio
     //// SELECT * FROM image WHERE ST_Distance(GeomFromText('POINT(13.430692 52.518139)', 4326), location) <= 5000
 
+    public static function graficoPrecoMedioTotalOCs($codigo, $dt_inicial, $dt_final)
+    {
+        $sql = 'select MONTH(dt_encerramento), YEAR(dt_encerramento), count(*) 
+                from ocs o 
+                inner join (select distinct id_oc as id_oc from itens where codigo = :codigo) i
+                on o.id=i.id_oc
+                WHERE dt_encerramento BETWEEN :dt_inicial AND :dt_final
+                GROUP BY YEAR(dt_encerramento), MONTH(dt_encerramento)';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result;
+    }
+
+    public static function graficoPrecoMedio($codigo, $dt_inicial, $dt_final)
+    {
+        $sql = 'select MONTH(dt_encerramento), YEAR(dt_encerramento), min(menor_valor), avg(menor_valor) 
+                from itens i inner join ocs o on i.id_oc=o.id 
+                where i.codigo = :codigo AND dt_encerramento BETWEEN :dt_inicial AND :dt_final 
+                GROUP BY YEAR(dt_encerramento), MONTH(dt_encerramento)';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result;
+    }
+
+    public static function graficoRegioes($codigo, $dt_inicial, $dt_final)
+    {
+        $sql = 'select count(*), r.nome from ocs o 
+                inner join uges u on o.id_uge = u.id 
+                inner join municipios m on u.id_municipio = m.id  
+                inner join regioes r on m.id_regiao=r.id
+                inner join itens i on o.id = i.id_oc
+                where i.codigo = :codigo
+                AND dt_encerramento BETWEEN :dt_inicial AND :dt_final
+                group by r.id';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result;
+    }
+
+    public static function graficoMunicipios($codigo, $dt_inicial, $dt_final)
+    {
+        $sql = 'select max(i.menor_valor), r.nome from ocs o 
+                inner join uges u on o.id_uge = u.id 
+                inner join municipios m on u.id_municipio = m.id  
+                inner join regioes r on m.id_regiao=r.id
+                inner join itens i on o.id = i.id_oc
+                where i.codigo = :codigo
+                AND dt_encerramento BETWEEN :dt_inicial AND :dt_final
+                group by r.id';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result;
+    }
+
+    public static function totalOCs($codigo, $dt_inicial, $dt_final)
+    {
+        $sql = 'select count(*) from ocs 
+                where id in (select distinct id_oc from itens where codigo = :codigo)
+                AND dt_encerramento BETWEEN :dt_inicial AND :dt_final';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result;
+    }
+
+    public static function totalFornecedores($codigo)
+    {
+        $sql = 'select count(distinct id_fornecedor) from itens i
+                inner join propostas p on i.id = p.id_item
+                where codigo = :codigo';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo]);
+        return $result;
+    }
 
 }
