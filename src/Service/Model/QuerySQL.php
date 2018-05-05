@@ -19,19 +19,33 @@ class QuerySQL
      * @param $dt_final
      * @return array
      */
-    public static function valoresOCs($dt_inicial, $dt_final)
+    public static function valoresOCs($codigo, $dt_inicial, $dt_final)
     {
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select  u.id as id_uge, u.uc, u.nome as nome_uc, u.endereco,
-                AsText(u.coordenadas) as coordenadas, o.codigo as oc,
-                o.dt_encerramento as dt_encerramento
-                from uges u
-                left join ocs o on u.id = o.id_uge
-                where dt_encerramento between :dt_inicial and :dt_final';
+        $sql = '
+            select u.uc, u.nome, X(coordenadas) as lat, Y(coordenadas) as log,
+                min(menor_valor) as valor_min, 
+                max(menor_valor) as valor_max, 
+                avg(menor_valor)  as valor_media,
+                count(o.id) as ocs,
+                sum(quantidade) as qtde
+            from uges u
+            inner join ocs o on u.id=o.id_uge
+            inner join itens i on o.id = i.id_oc
+            where i.codigo= :codigo
+            AND dt_encerramento BETWEEN :dt_inicial AND :dt_final
+            GROUP BY u.id
+            ORDER BY u.nome
+        ';
 
-        $result = DB::select(DB::raw($sql), ['dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        $result = DB::select(DB::raw($sql), 
+            [
+                'codigo' => $codigo,
+                'dt_inicial' => $dt_inicial, 
+                'dt_final' => $dt_final
+            ]);
         return $result;
     }
 

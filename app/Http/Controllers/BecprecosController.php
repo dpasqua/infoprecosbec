@@ -43,12 +43,24 @@ class BecprecosController extends Controller
     { 
         $input = $request->all();
 
-        // $input['produto'] $input['uc'] $input['data_inicial'] $input['data_final'] $input['raio']
+        // pega o codigo do produto
+        list($produto) = explode(' ', $input['produto']);
+        $input['produto'] = $produto;
+        
+        // pegar UGES no raio com OCs dentro de datas especificadas
+        $ocs = QuerySQL::valoresOCs(
+            $input['produto'],
+            $input['data_inicial'], 
+            $input['data_final']
+        );
 
-        $table = $this->pegaTableDados($input);
+        $mapa = $this->pegaMapaDados($input['raio'], $ocs);
+
+        // $input['produto'] $input['uc'] $input['data_inicial'] $input['data_final'] $input['raio']
+        $table = $this->pegaTableDados($input, $ocs);
 
         $data = [
-            'mapa' => $this->pegaMapaDados($input['raio']),
+            'mapa' => $mapa,
             'table' => $table,
             'chart1' => $this->pegaChart1Dados(),
             'chart2' => $this->pegaChart2Dados(),
@@ -136,19 +148,22 @@ class BecprecosController extends Controller
     /**
      * dados da tabela
      */
-    private function pegaTableDados(array $input)
+    private function pegaTableDados(array $input, $ocs)
     {
         $coordenadas_uc = QuerySQL::coordenadas($input['uc']);
         //var_dump($coordenadas_uc);
 
-        // pegar UGES no raio com OCs dentro de datas especificadas
-        $ocs = QuerySQL::valoresOCs($input['data_inicial'], $input['data_final']);
-        //var_dump($ocs); die;
         $dados = [];
-
         $dados[] = ['Todos', 30, 50000, '10,18', '4,56', '6,84', '-'];
         foreach ($ocs as $oc) {
-            $dados[] = [$oc->uc . ' - ' . $oc->nome_uc, 30, 50000, '10,18', '4,56', '6,84', '-'];
+            $dados[] = [
+                $oc->uc . ' - ' . $oc->nome, 
+                $oc->ocs, 
+                $oc->qtde, 
+                number_format($oc->valor_max, 2, ',', '.'), 
+                number_format($oc->valor_min, 2, ',', '.'),
+                number_format($oc->valor_media,2, ',', '.'), 
+                '-'];
         }
 
         return $dados;
@@ -157,19 +172,22 @@ class BecprecosController extends Controller
     /**
      * dados do mapa
      */
-    private function pegaMapaDados($raio)
+    private function pegaMapaDados($raio, $ocs)
     {
         $mapa = [
             'center' => [ -23.45646630689063, -46.5166256, "Av. Mariana Ubaldina do Espírito Santo"],
-            'points' => [
-                [-23.37132835,-46.50763057, "PREF A", 2],
-                [-23.38068342,-46.51933063, "PREF B", 3],
-                [-23.50887798,-46.49556224, "PREF C", 4],
-                [-23.39671372,-46.56571462, "PREF D", 5],
-                [-23.4004857,-46.48551614, "PREF E", 6],
-            ],
             'raio' => $raio
         ];
+
+        $count = 1;
+        $points = [];
+        foreach($ocs as $oc) {
+            $points[] = [
+                $oc->lat, $oc->log, $oc->nome, $count++
+            ];
+        }
+
+        $mapa['points'] = $points;
         return $mapa;         
     }
 }
