@@ -99,7 +99,7 @@ class QuerySQL
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select count(*), r.nome from ocs o 
+        $sql = 'select count(*) as total, r.nome as nome from ocs o 
                 inner join uges u on o.id_uge = u.id 
                 inner join municipios m on u.id_municipio = m.id  
                 inner join regioes r on m.id_regiao=r.id

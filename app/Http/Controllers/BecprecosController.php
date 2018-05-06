@@ -60,12 +60,13 @@ class BecprecosController extends Controller
         $table = $this->pegaTableDados($input, $ocs);
 
         $preco_medio = $this->pegaChart1Dados($input);
+        $regioes = $this->pegaChart2Dados($input);
 
         $data = [
             'mapa' => $mapa,
             'table' => $table,
             'chart1' => $preco_medio,
-            'chart2' => $this->pegaChart2Dados(),
+            'chart2' => $regioes,
             'chart3' => $this->pegaChart3Dados(),
             'chart4' => $this->pegaChart4Dados(),
             'chart5' => $this->pegaChart5Dados(),
@@ -201,25 +202,33 @@ class BecprecosController extends Controller
     /**
      * Unidades compradas por Regiao Geografica
      */
-    private function pegaChart2Dados()
+    private function pegaChart2Dados(array $input)
     {
-        $dados = [
-            'labels' => [
-                'São Paulo',
-                'Sorocaba',
-                'Bauru',
-                'Marília',
-                'Presidente Prudente',
-                'Araçatuba',
-                'São José do Rio Preto',
-                'Ribeirão Preto',
-                'Araraquara',
-                'Campinas',
-                'São José dos Campos'],
-            'porcentagem' => [45, 26.8, 12.8, 8.5, 6.2, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
+        $regioes = QuerySQL::graficoRegioes($input['produto'], $input['data_inicial'], $input['data_final']);
+        $cem_por_cento = 0;
+
+        foreach ($regioes as $regiao) {
+            $cem_por_cento += $regiao->total;
+        }
+        foreach ($regioes as $k => $regiao) {
+            $regioes[$k]->porcentagem =
+                floatval(number_format(Stats::porcentagem($cem_por_cento, $regiao->total), 2, '.', ','));
+        }
+
+        $dados_formatados = [
+            'labels' => [],
+            'porcentagem' => []
         ];
 
-        return $dados;
+        foreach ($regioes as $regiao) {
+            if ($regiao->porcentagem == 0) {
+                continue; // nao adiciona
+            }
+            $dados_formatados['labels'][] = $regiao->nome;
+            $dados_formatados['porcentagem'][] = $regiao->porcentagem;
+        }
+
+        return $dados_formatados;
     }
 
     /**

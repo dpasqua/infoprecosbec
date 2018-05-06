@@ -16,4 +16,14 @@ class Stats
         $media = $sum / $size;
         return round($media, 2);
     }
+
+    public static function porcentagem($total, $parcial)
+    {
+        if ($parcial == 0) {
+            return 0;
+        }
+
+        $parcial_100 = $parcial * 100;
+        return $parcial_100 / $total;
+    }
 }
