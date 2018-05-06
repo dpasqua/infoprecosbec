@@ -153,4 +153,20 @@ class QuerySQL
         return $result;
     }
 
+    public static function precoMedioFornecedorProduto($codigo, $dt_inicial, $dt_final)
+    {
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
+
+        $sql = 'SELECT frn.nome, frn.cnpj, frn.porte, it.menor_valor, AVG(it.menor_valor) preco_medio
+                FROM `itens` AS it 
+                INNER JOIN fornecedores as frn ON frn.id = it.id_fornecedor_vencedor 
+                INNER JOIN ocs oc ON oc.id = it.id_oc
+                where it.codigo = :codigo and oc.dt_encerramento BETWEEN :dt_inicial AND :dt_final
+                GROUP BY it.id_fornecedor_vencedor 
+                order by it.id_fornecedor_vencedor ';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result;
+    }
 }

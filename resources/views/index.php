@@ -174,11 +174,11 @@
                                     <table id="myTableFornecedor" class="striped highlight responsive-table">
                                         <thead>
                                         <tr>
-                                            <th scope="col">Raza Social</th>
+                                            <th scope="col">Razão Social</th>
                                             <th scope="col">CNPJ</th>
                                             <th scope="col">Porte</th>
+                                            <th scope="col">Menor Valor</th>
                                             <th scope="col">Preço Médio</th>
-                                            <th scope="col">Qtde. OC?</th>
                                         </tr>
                                         </thead>
                                         <tbody>

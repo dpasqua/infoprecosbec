@@ -58,6 +58,7 @@ class BecprecosController extends Controller
 
         $mapa = $this->pegaMapaDados($input['raio'], $ocs);
         $table = $this->pegaTableDados($input, $ocs);
+        $tableFornecedor = $this->pegaTableFornecedorDados($input);
 
         $preco_medio = $this->pegaChart1Dados($input);
         $regioes = $this->pegaChart2Dados($input);
@@ -70,7 +71,7 @@ class BecprecosController extends Controller
             'chart3' => $this->pegaChart3Dados(),
             'chart4' => $this->pegaChart4Dados(),
             'chart5' => $this->pegaChart5Dados(),
-            'tableFornecedor' => $this->pegaTableFornecedorDados(),
+            'tableFornecedor' => $tableFornecedor,
             'infoGeral' => $this->pegaInfoGeral()
         ];
         return response()->json($data);
@@ -256,18 +257,22 @@ class BecprecosController extends Controller
         return $dados;
     }
 
-    private function pegaTableFornecedorDados()
+    private function pegaTableFornecedorDados(array $input)
     {
-        $dados = [
-            ['AAAAAAA', '00.000.000/0001-00', 50000, '10,18', '10'],
-            ['BBBBBBB', '00.000.000/0002-00', 50000, '10,18', '20'],
-            ['CCCCCCC', '00.000.000/0003-00', 50000, '10,18', '30'],
-            ['DDDDDDD', '00.000.000/0004-00', 50000, '10,18', '40'],
-            ['EEEEEE', '00.000.000/00005-00', 50000, '10,18', '50'],
-            ['FFFFFF', '00.000.000/0006-00', 50000, '10,18', '60'],
-            ['GGGGGG', '00.000.000/0007-00', 50000, '10,18', '70'],
-        ];
+        $dados = [];
 
+        $produtos_fornecedores = QuerySQL::precoMedioFornecedorProduto($input['produto'], $input['data_inicial'], $input['data_final']);
+
+        foreach ($produtos_fornecedores as $fornecedor) {
+            //var_dump ($fornecedor); die;
+            $dados[] = [
+                $fornecedor->nome,
+                $fornecedor->cnpj,
+                $fornecedor->porte,
+                number_format($fornecedor->menor_valor, 2, ',', '.'),
+                number_format($fornecedor->preco_medio, 2, ',', '.')
+            ];
+        }
         return $dados;
     }
 
