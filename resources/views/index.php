@@ -164,6 +164,7 @@
                                         <p>No período pesquisado foram executados <b id="oc_num"></b> OC (Ordens de Compra) para este produto no portal BEC. Participaram <b id="fornecedores_participantes"></b> diferentes fornecedores sendo <b id="vencedores_diferentes"></b> diferentes vencedores.</p>
                                         <ul>
                                             <li id="fornecedores_epp"></li>
+                                            <li id="fornecedores_me"></li>
                                             <li id="fornecedores_outros"></li>
                                         </ul>
                                     </div>

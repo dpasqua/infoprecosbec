@@ -225,20 +225,5 @@ class QuerySQL
         $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
         return $result;
     }
-
-    public static function graficoTotalPorte($codigo, $dt_inicial, $dt_final)
-    {
-        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
-        $dt_final = Formatter::formataDataParaMySQL($dt_final);
-
-        $sql = 'select count(*) total, f.porte
-                from itens i
-                INNER JOIN fornecedores f on f.id = i.id_fornecedor_vencedor
-                INNER JOIN ocs oc ON oc.id = i.id_oc
-                where i.codigo = :codigo and oc.dt_encerramento BETWEEN :dt_inicial AND :dt_final
-                group by f.porte';
-
-        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
-        return $result;
-    }
+    
 }
