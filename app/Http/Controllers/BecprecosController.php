@@ -43,6 +43,7 @@ class BecprecosController extends Controller
     public function buscarReferencias(Request $request)
     {
         $input = $request->all();
+        // $input['produto'] $input['uc'] $input['data_inicial'] $input['data_final'] $input['raio']
 
         // pega o codigo do produto
         list($produto) = explode(' ', $input['produto']);
@@ -56,44 +57,97 @@ class BecprecosController extends Controller
         );
 
         $mapa = $this->pegaMapaDados($input['raio'], $ocs);
-
-        // $input['produto'] $input['uc'] $input['data_inicial'] $input['data_final'] $input['raio']
         $table = $this->pegaTableDados($input, $ocs);
+
+        $preco_medio = $this->pegaChart1Dados($input);
 
         $data = [
             'mapa' => $mapa,
             'table' => $table,
-            'chart1' => $this->pegaChart1Dados(),
+            'chart1' => $preco_medio,
             'chart2' => $this->pegaChart2Dados(),
             'chart3' => $this->pegaChart3Dados(),
             'chart4' => $this->pegaChart4Dados(),
             'chart5' => $this->pegaChart5Dados(),
-            'infoGeral' => $this->pegaInfoGeral(),
-            'tableFornecedor' => $this->pegaTableFornecedorDados()
+            'tableFornecedor' => $this->pegaTableFornecedorDados(),
+            'infoGeral' => $this->pegaInfoGeral()
         ];
         return response()->json($data);
     }
 
     /**
-     * dados gerais
+     * dados do mapa
      */
-    private function pegaInfoGeral()
+    private function pegaMapaDados($raio, $ocs)
     {
-        $dados = [
-            'unitario_min_mes' => 'Jan/2018',
-            'unitario_min_vl' => 'R$ 4,56',
-            'localidade_max_regiao1' => 'São Paulo',
-            'localidade_max_regiao2' => 'Campinas',
-            'localidade_max_regiao3' => 'Marília',
-            'investimento_municipio' => 'São Paulo',
-            'investimento_valor' => 'R$ 10.000.000,00',
-            'orgao_comprador_max' => 'Prefeitura Municipal de São Paulo',
-            'oc_num' => '32',
-            'fornecedores_participantes' => '53',
-            'vencedores_diferentes' => '18',
-            'fornecedores_epp' => '33 EPP/ME (62%)',
-            'fornecedores_outros' => '20 Outros (38%)'
+        $mapa = [
+            'center' => [ -23.45646630689063, -46.5166256, "Av. Mariana Ubaldina do Espírito Santo"],
+            'raio' => $raio
         ];
+
+        $count = 1;
+        $points = [];
+        foreach($ocs as $oc) {
+            $points[] = [
+                $oc->lat, $oc->log, $oc->nome, $count++
+            ];
+        }
+
+        $mapa['points'] = $points;
+        return $mapa;
+    }
+
+    /**
+     * dados da tabela
+     */
+    private function pegaTableDados(array $input, $ocs)
+    {
+        $coordenadas_uc = QuerySQL::coordenadas($input['uc']);
+
+        $dados = [];
+
+        $qtd_ocs = 0;
+        $qtd_unit = 0;
+        $max = []; $min = []; $med = [];
+
+        foreach ($ocs as $oc) {
+            $qtd_ocs += (int) $oc->ocs;
+            $qtd_unit += (int) $oc->qtde;
+
+            $max[] = $oc->valor_max;
+            $min[] = $oc->valor_min;
+            $med[] = $oc->valor_media;
+
+            $dados_uc = [
+                $oc->uc . ' - ' . $oc->nome,
+                $oc->ocs,
+                $oc->qtde,
+                number_format($oc->valor_max, 2, ',', '.'),
+                number_format($oc->valor_min, 2, ',', '.'),
+                number_format($oc->valor_media,2, ',', '.'),
+                '-'
+            ];
+
+            if ($input['uc'] != $oc->nome) {
+                $dados[] = $dados_uc;
+            } else {
+                array_unshift($dados, $dados_uc);
+            }
+
+        }
+
+        if (count($ocs) > 0) {
+            $todos = [
+                'Todos',
+                $qtd_ocs,
+                $qtd_unit,
+                number_format(max($max), 2, ',', '.'),
+                number_format(min($min), 2, ',', '.'),
+                number_format(Stats::media($med), 2, ',', '.'),
+                '-'
+            ];
+            array_unshift($dados, $todos);
+        }
 
         return $dados;
     }
@@ -101,16 +155,37 @@ class BecprecosController extends Controller
     /**
      * comparativo de preços médios
      */
-    private function pegaChart1Dados()
+    private function pegaChart1Dados(array $input)
     {
-        $dados = [
-            'qtde_oc' => [20, 30, 40, 50, 30, 20, 35, 45, 55, 60, 48, 30],
-            'preco_min' => [6, 6, 6, 11.3, 17, 22, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5],
-            'preco_medio' => [6, 6.5, 8, 8.4, 13.5, 17, 18.6, 17.9, 14.3, 9, 3.9, 1],
-            'bgcolor' => array_fill(0, 12, 'rgba(54, 162, 235, 0.2)'),
-            'labels' => ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        $dados = [];
+
+        $total_ocs = QuerySQL::graficoPrecoMedioTotalOCs($input['produto'], $input['data_inicial'], $input['data_final']);
+        foreach ($total_ocs as $total) {
+            $dados[$total->ano . '-' . $total->mes] = [
+                'qtd' => $total->qtd,
+                'mes' => Formatter::mesCorrespondente($total->mes),
+                'ano' => $total->ano
+            ];
+        }
+
+        $precos_medios = QuerySQL::graficoPrecoMedio($input['produto'], $input['data_inicial'], $input['data_final']);
+        foreach ($precos_medios as $preco_medio) {
+            $dados[$preco_medio->ano . '-' . $preco_medio->mes]['menor_valor'] = $preco_medio->menor_valor;
+            $dados[$preco_medio->ano . '-' . $preco_medio->mes]['media'] = $preco_medio->media;
+        }
+
+        $dados_formatados = [
+            'qtde_oc' => [], 'preco_min' => [], 'preco_medio' => [], 'labels' => [],
+            'bgcolor' => array_fill(0, count($dados), 'rgba(54, 162, 235, 0.2)')
         ];
-        return $dados;
+        foreach ($dados as $ano => $dado) {
+            $dados_formatados['qtde_oc'][] = $dado['qtd'];
+            $dados_formatados['preco_min'][] = $dado['menor_valor'];
+            $dados_formatados['preco_medio'][] = $dado['media'];
+            $dados_formatados['labels'][] = $dado['mes'] . '/' . substr($dado['ano'], -2);
+        }
+
+        return $dados_formatados;
     }
 
     private function pegaChart4Dados()
@@ -172,83 +247,6 @@ class BecprecosController extends Controller
         return $dados;
     }
 
-    /**
-     * dados da tabela
-     */
-    private function pegaTableDados(array $input, $ocs)
-    {
-        $coordenadas_uc = QuerySQL::coordenadas($input['uc']);
-
-        $dados = [];
-
-        $qtd_ocs = 0;
-        $qtd_unit = 0;
-        $max = [];
-        $min = [];
-        $med = [];
-
-        foreach ($ocs as $oc) {
-            $qtd_ocs += (int) $oc->ocs;
-            $qtd_unit += (int) $oc->qtde;
-
-            $max[] = $oc->valor_max;
-            $min[] = $oc->valor_min;
-            $med[] = $oc->valor_media;
-
-            $dados_uc = [
-                $oc->uc . ' - ' . $oc->nome,
-                $oc->ocs,
-                $oc->qtde,
-                number_format($oc->valor_max, 2, ',', '.'),
-                number_format($oc->valor_min, 2, ',', '.'),
-                number_format($oc->valor_media,2, ',', '.'),
-                '-'
-            ];
-
-            if ($input['uc'] != $oc->nome) {
-                $dados[] = $dados_uc;
-            } else {
-                array_unshift($dados, $dados_uc);
-            }
-
-        }
-        
-        $todos = [
-            'Todos',
-            $qtd_ocs,
-            $qtd_unit,
-            number_format(max($max), 2, ',', '.'),
-            number_format(min($min), 2, ',', '.'),
-            number_format(Stats::media($med), 2, ',', '.'),
-            '-'
-        ];
-        array_unshift($dados, $todos);
-
-        return $dados;
-    }
-
-    /**
-     * dados do mapa
-     */
-    private function pegaMapaDados($raio, $ocs)
-    {
-        $mapa = [
-            'center' => [ -23.45646630689063, -46.5166256, "Av. Mariana Ubaldina do Espírito Santo"],
-            'raio' => $raio
-        ];
-
-        $count = 1;
-        $points = [];
-        foreach($ocs as $oc) {
-            $points[] = [
-                $oc->lat, $oc->log, $oc->nome, $count++
-            ];
-        }
-
-        $mapa['points'] = $points;
-        return $mapa;         
-    }
-
     private function pegaTableFornecedorDados()
     {
         $dados = [
@@ -263,4 +261,29 @@ class BecprecosController extends Controller
 
         return $dados;
     }
+
+    /**
+     * dados gerais
+     */
+    private function pegaInfoGeral()
+    {
+        $dados = [
+            'unitario_min_mes' => 'Jan/2018',
+            'unitario_min_vl' => 'R$ 4,56',
+            'localidade_max_regiao1' => 'São Paulo',
+            'localidade_max_regiao2' => 'Campinas',
+            'localidade_max_regiao3' => 'Marília',
+            'investimento_municipio' => 'São Paulo',
+            'investimento_valor' => 'R$ 10.000.000,00',
+            'orgao_comprador_max' => 'Prefeitura Municipal de São Paulo',
+            'oc_num' => '32',
+            'fornecedores_participantes' => '53',
+            'vencedores_diferentes' => '18',
+            'fornecedores_epp' => '33 EPP/ME (62%)',
+            'fornecedores_outros' => '20 Outros (38%)'
+        ];
+
+        return $dados;
+    }
+
 }

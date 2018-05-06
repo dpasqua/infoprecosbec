@@ -68,7 +68,7 @@ class QuerySQL
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select MONTH(dt_encerramento), YEAR(dt_encerramento), count(*) 
+        $sql = 'select MONTH(dt_encerramento) as mes, YEAR(dt_encerramento) as ano, count(*) as qtd
                 from ocs o 
                 inner join (select distinct id_oc as id_oc from itens where codigo = :codigo) i
                 on o.id=i.id_oc
@@ -84,7 +84,8 @@ class QuerySQL
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select MONTH(dt_encerramento), YEAR(dt_encerramento), min(menor_valor), avg(menor_valor) 
+        $sql = 'select MONTH(dt_encerramento) as mes, YEAR(dt_encerramento) as ano,
+                min(menor_valor) as menor_valor, avg(menor_valor) as media 
                 from itens i inner join ocs o on i.id_oc=o.id 
                 where i.codigo = :codigo AND dt_encerramento BETWEEN :dt_inicial AND :dt_final 
                 GROUP BY YEAR(dt_encerramento), MONTH(dt_encerramento)';
