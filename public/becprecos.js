@@ -257,7 +257,7 @@ class BecPrecos
                 datasets: [
                     {
                         label: 'Preço Médio',
-                        data: dataChart.qtde_oc,
+                        data: dataChart.preco_medio,
                         backgroundColor: dataChart.bgcolor,
                         borderColor: [
                             'rgba(54, 162, 235, 1)'

@@ -10,6 +10,7 @@ use Infoprecos\BEC\Service\Model\QuerySQL;
 
 class BecprecosController extends Controller
 {
+    private $dados_regioes;
 
     /**
      * autocomplete prefeitura
@@ -62,6 +63,7 @@ class BecprecosController extends Controller
 
         $preco_medio = $this->pegaChart1Dados($input);
         $regioes = $this->pegaChart2Dados($input);
+        $portes = $this->pegaChart5Dados($input);
 
         $data = [
             'mapa' => $mapa,
@@ -70,7 +72,7 @@ class BecprecosController extends Controller
             'chart2' => $regioes,
             'chart3' => $this->pegaChart3Dados(),
             'chart4' => $this->pegaChart4Dados(),
-            'chart5' => $this->pegaChart5Dados(),
+            'chart5' => $portes,
             'tableFornecedor' => $tableFornecedor,
             'infoGeral' => $this->pegaInfoGeral()
         ];
@@ -192,12 +194,18 @@ class BecprecosController extends Controller
 
     private function pegaChart4Dados()
     {
-        $dados = [
-            'qtde_oc' => [20, 30, 40, 50, 30, 20, 35, 45, 55, 60, 48],
-            'bgcolor' => array_fill(0, 11, 'rgba(54, 162, 235, 0.2)'),
-            'labels' => ['12345678901', '1234 67890', '12345678901', '12 4567 90', '1234567890 ', '123 567890', '1234567890 ', '12345 7890', '1234567890 ', '12345 78901', '12345678901'],
+        $dados_formatados = [
+            'valor_medio' => [],
+            'labels' => [],
+            'bgcolor' => array_fill(0, count($this->dados_regioes), 'rgba(54, 162, 235, 0.2)'),
         ];
-        return $dados;
+
+        foreach ($this->dados_regioes as $regiao) {
+            $dados_formatados['labels'][] = substr($regiao->nome,0,8).'...';
+            $dados_formatados['preco_medio'][] = number_format($regiao->preco_medio, 2, '.', ',');
+        }
+
+        return $dados_formatados;
     }
 
     /**
@@ -205,14 +213,14 @@ class BecprecosController extends Controller
      */
     private function pegaChart2Dados(array $input)
     {
-        $regioes = QuerySQL::graficoRegioes($input['produto'], $input['data_inicial'], $input['data_final']);
+        $this->dados_regioes = QuerySQL::graficoRegioes($input['produto'], $input['data_inicial'], $input['data_final']);
         $cem_por_cento = 0;
 
-        foreach ($regioes as $regiao) {
+        foreach ($this->dados_regioes as $regiao) {
             $cem_por_cento += $regiao->total;
         }
-        foreach ($regioes as $k => $regiao) {
-            $regioes[$k]->porcentagem =
+        foreach ($this->dados_regioes as $k => $regiao) {
+            $this->dados_regioes[$k]->porcentagem =
                 floatval(number_format(Stats::porcentagem($cem_por_cento, $regiao->total), 2, '.', ','));
         }
 
@@ -221,7 +229,7 @@ class BecprecosController extends Controller
             'porcentagem' => []
         ];
 
-        foreach ($regioes as $regiao) {
+        foreach ($this->dados_regioes as $regiao) {
             if ($regiao->porcentagem == 0) {
                 continue; // nao adiciona
             }
@@ -244,17 +252,33 @@ class BecprecosController extends Controller
         return $dados;
     }
 
-    private function pegaChart5Dados()
+    private function pegaChart5Dados(array $input)
     {
-        $dados = [
-            'labels' => [
-                'Cooperativas',
-                'EPP',
-                'ME',
-                'Outros'],
-            'porcentagem' => [45, 26.8, 12.8, 10],
+        $portes = QuerySQL::graficoTotalPorte($input['produto'], $input['data_inicial'], $input['data_final']);
+        $cem_por_cento = 0;
+
+        foreach ($portes as $porte) {
+            $cem_por_cento += $porte->total;
+        }
+        foreach ($portes as $k => $porte) {
+            $portes[$k]->porcentagem =
+                floatval(number_format(Stats::porcentagem($cem_por_cento, $porte->total), 2, '.', ','));
+        }
+
+        $dados_formatados = [
+            'labels' => [],
+            'porcentagem' => []
         ];
-        return $dados;
+
+        foreach ($portes as $porte) {
+            if ($porte->porcentagem == 0) {
+                continue; // nao adiciona
+            }
+            $dados_formatados['labels'][] = $porte->porte;
+            $dados_formatados['porcentagem'][] = $porte->porcentagem;
+        }
+
+        return $dados_formatados;
     }
 
     private function pegaTableFornecedorDados(array $input)
