@@ -103,9 +103,6 @@ class BecprecosController extends Controller
         $info['localidade_max_regiao2'] = $regiao2;
         $info['localidade_max_regiao3'] = $regiao3;
 
-        $info_geral = $this->pegaInfoGeral($input, $info);
-        $portes = $this->pegaChart5Dados();
-
         $municipios = $this->pegaChart3Dados($input, $uc);
         if(!empty($municipios['labels'])) {
             $mun = $municipios['labels'][0];
@@ -117,6 +114,8 @@ class BecprecosController extends Controller
         
         $info['investimento_municipio'] = $mun;
         $info['investimento_valor'] = 'R$ ' . $valor;
+        $info_geral = $this->pegaInfoGeral($input, $info);
+        $portes = $this->pegaChart5Dados();
         
         $data = [
             'mapa' => $mapa,
