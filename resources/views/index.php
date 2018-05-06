@@ -146,8 +146,7 @@
                         <div class="card-content">
                             <div class="row">
                                 <div class="col s12 m4">
-                                    <p class="center-align">Os órgãos do município de <span class="text-success" id="investimento_municipio"></span> investiram juntos um montante de <span class="text-danger" id="investimento_valor"></span> no produto pesquisado.</p>
-                                    <p class="center-align">Seu maior comprador é o Órgão <b id="orgao_comprador_max"></b></p>
+                                    <p class="center-align">Os órgãos do município de <b id="investimento_municipio"></b> investiram juntos um montante de <b id="investimento_valor"></span> no produto pesquisado.</p>
                                 </div>
                                 <div class="col s12 m8">
                                     <canvas id="myChart3"></canvas>

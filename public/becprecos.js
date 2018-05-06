@@ -337,7 +337,11 @@ class BecPrecos
     // chart3
     newChart3(ctx3, dataChart)
     {
-        var myBarChart = new Chart(ctx3, {
+        if(this.chart3 != null) {
+            this.chart3.destroy();
+        }
+        
+        this.chart3 = new Chart(ctx3, {
             type: 'horizontalBar',
             responsive: true,
             maintainAspectRatio: true,

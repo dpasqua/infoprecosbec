@@ -146,21 +146,35 @@ class QuerySQL
         return $result;
     }
 
-    public static function graficoMunicipios($codigo, $dt_inicial, $dt_final)
+    public static function graficoMunicipios($codigo, $dt_inicial, $dt_final, $uc_nome)
     {
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select max(i.menor_valor) as maximo, r.nome as nome from ocs o 
+        $sql = 'select truncate(sum(i.menor_valor),2) as maximo, m.nome as nome from ocs o 
                 inner join uges u on o.id_uge = u.id 
-                inner join municipios m on u.id_municipio = m.id  
-                inner join regioes r on m.id_regiao=r.id
+                inner join municipios m on u.id_municipio = m.id 
+                inner join regioes r ON m.id_regiao = r.id 
                 inner join itens i on o.id = i.id_oc
                 where i.codigo = :codigo
                 AND dt_encerramento BETWEEN :dt_inicial AND :dt_final
-                group by r.id';
+                AND r.id = (
+                    SELECT r.id FROM uges u
+                    INNER JOIN municipios m ON u.id_municipio = m.id
+                    INNER JOIN regioes r ON m.id_regiao = r.id
+                    WHERE u.nome = :nome 
+                )
+                group by m.id
+                order by maximo DESC
+                limit 10
+                ';
 
-        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        $result = DB::select(DB::raw($sql), [
+            'codigo' => $codigo, 
+            'dt_inicial' => $dt_inicial, 
+            'dt_final' => $dt_final,
+            'nome' => $uc_nome
+        ]);
         return $result;
     }
 

@@ -69,10 +69,16 @@ class BecprecosController extends Controller
 
         $preco_medio = $this->pegaChart1Dados($input, $uc);
 
-        $min_value = min($preco_medio['preco_min']);
-        $key = array_search($min_value, $preco_medio['preco_min']);
-        $mes = $preco_medio['labels'][$key];
-
+        if(isset($preco_medio['preco_min'])
+            && !empty($preco_medio['preco_min'])) {
+            $min_value = min($preco_medio['preco_min']);
+            $key = array_search($min_value, $preco_medio['preco_min']);
+            $mes = $preco_medio['labels'][$key];
+        } else {
+            $min_value = 0;
+            $mes = '';
+        }
+        
         $info = [
             'unitario_min_mes' => $mes,
             'unitario_min_vl' => 'R$ ' . number_format($min_value, 2, ',', '.'),
@@ -83,17 +89,33 @@ class BecprecosController extends Controller
         $porcentagem = $regioes['porcentagem'];
         arsort($porcentagem);
         $pkeys = array_keys($porcentagem);
-        $regiao1 = $regioes['labels'][$pkeys[0]];
-        $regiao2 = $regioes['labels'][$pkeys[1]];
-        $regiao3 = $regioes['labels'][$pkeys[2]];
+
+        if(count($pkeys) >= 3) {
+            $regiao1 = $regioes['labels'][$pkeys[0]];
+            $regiao2 = $regioes['labels'][$pkeys[1]];
+            $regiao3 = $regioes['labels'][$pkeys[2]];
+        } else {
+            $regiao1 = ''; $regiao2 = ''; $regiao3 = '';
+        }
+        
         $info['localidade_max_regiao1'] = $regiao1;
         $info['localidade_max_regiao2'] = $regiao2;
         $info['localidade_max_regiao3'] = $regiao3;
 
         $portes = $this->pegaChart5Dados($input);
 
-        $municipios = $this->pegaChart3Dados($input);
-
+        $municipios = $this->pegaChart3Dados($input, $uc);
+        if(!empty($municipios['labels'])) {
+            $mun = $municipios['labels'][0];
+            $valor = number_format($municipios['data'][0], 2, ',', '.');  
+        } else {
+            $mun = '';
+            $valor = 0;
+        }
+        
+        $info['investimento_municipio'] = $mun;
+        $info['investimento_valor'] = 'R$ ' . $valor;
+        
         $data = [
             'mapa' => $mapa,
             'table' => $table,
@@ -217,10 +239,6 @@ class BecprecosController extends Controller
             $dados_formatados['labels'][] = $dado['mes'] . '/' . substr($dado['ano'], -2);
         }
 
-        $min_value = min($dados_formatados['preco_min']);
-        $key = array_search($min_value, $dados_formatados['preco_min']);
-        $mes = $dados_formatados['labels'][$key];
-
         return $dados_formatados;
     }
 
@@ -275,16 +293,20 @@ class BecprecosController extends Controller
     /**
      * Top 10 Municípios que mais compraram
      */
-    private function pegaChart3Dados(array $input)
+    private function pegaChart3Dados(array $input, $uc)
     {
-        //$municipios = QuerySQL::graficoMunicipios($input['produto'], $input['data_inicial'], $input['data_final']);
-        //var_dump($municipios); die;
-
-        $dados = [
-            'data' => [10000000, 7500000, 5500000, 4000000, 1500000, 1000000, 800000, 500000, 200000, 100000],
-            'labels' => ['São Paulo', 'Osasco', 'Campinas', 'Jundiaí', 'Guarulhos', 'Ribeirão Preto', 'São Bernardo do Campo', 'Bauru', 'Sorocaba', 'Americana']
+        $municipios = QuerySQL::graficoMunicipios($input['produto'], $input['data_inicial'], $input['data_final'], $uc);
+        $dados_formatados = [
+            'data' => [],
+            'labels' => []
         ];
-        return $dados;
+
+        foreach($municipios as $m) {
+            $dados_formatados['labels'][] = $m->nome;
+            $dados_formatados['data'][] = $m->maximo;
+        }
+
+        return $dados_formatados;
     }
 
     private function pegaChart5Dados(array $input)
@@ -351,8 +373,8 @@ class BecprecosController extends Controller
             'localidade_max_regiao1' => $info['localidade_max_regiao1'],
             'localidade_max_regiao2' => $info['localidade_max_regiao2'],
             'localidade_max_regiao3' => $info['localidade_max_regiao3'],
-            'investimento_municipio' => 'São Paulo',
-            'investimento_valor' => 'R$ 10.000.000,00',
+            'investimento_municipio' => $info['investimento_municipio'],
+            'investimento_valor' => $info['investimento_valor'],
             'orgao_comprador_max' => 'Prefeitura Municipal de São Paulo',
             'oc_num' => $this->pegaTotalOCs($input),
             'fornecedores_participantes' => $fornecs['total'],
