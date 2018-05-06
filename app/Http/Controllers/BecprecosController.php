@@ -309,7 +309,7 @@ class BecprecosController extends Controller
      */
     private function pegaInfoGeral(array $input)
     {
-        $fornecedores = $this->pegaTotalFornecedores($input);
+        $fornecs = $this->pegaTotalFornecedores($input);
 
         $dados = [
             'unitario_min_mes' => 'Jan/2018',
@@ -321,8 +321,8 @@ class BecprecosController extends Controller
             'investimento_valor' => 'R$ 10.000.000,00',
             'orgao_comprador_max' => 'Prefeitura Municipal de São Paulo',
             'oc_num' => $this->pegaTotalOCs($input),
-            'fornecedores_participantes' => '53',
-            'vencedores_diferentes' => '18',
+            'fornecedores_participantes' => $fornecs->total_fornecedores,
+            'vencedores_diferentes' => $fornecs->total_vencedores,
             'fornecedores_epp' => '33 EPP/ME (62%)',
             'fornecedores_outros' => '20 Outros (38%)'
         ];
@@ -337,10 +337,7 @@ class BecprecosController extends Controller
 
     private function pegaTotalFornecedores(array $input)
     {
-        $f = QuerySQL::totalFornecedores($input['produto'], $input['data_inicial'], $input['data_final']);
-        // TODO incompleto
-
-        //var_dump($f); die;
+        return QuerySQL::totalFornecedores($input['produto'], $input['data_inicial'], $input['data_final']);
     }
 
 }

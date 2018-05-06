@@ -145,6 +145,9 @@ class QuerySQL
 
     public static function totalFornecedores($codigo, $dt_inicial, $dt_final)
     {
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
+
         $sql = 'select count(distinct p.id_fornecedor) as total_fornecedores,
                 count(distinct i.id_fornecedor_vencedor) as total_vencedores
                 from itens i
