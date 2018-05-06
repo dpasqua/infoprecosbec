@@ -5,6 +5,7 @@ use App\Author;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Infoprecos\BEC\Service\Char\Formatter;
+use Infoprecos\BEC\Service\Math\Stats;
 use Infoprecos\BEC\Service\Model\QuerySQL;
 
 class BecprecosController extends Controller
@@ -179,17 +180,49 @@ class BecprecosController extends Controller
         $coordenadas_uc = QuerySQL::coordenadas($input['uc']);
 
         $dados = [];
-        $dados[] = ['Todos', 30, 50000, '10,18', '4,56', '6,84', '-'];
+
+        $qtd_ocs = 0;
+        $qtd_unit = 0;
+        $max = [];
+        $min = [];
+        $med = [];
+
         foreach ($ocs as $oc) {
-            $dados[] = [
-                $oc->uc . ' - ' . $oc->nome, 
-                $oc->ocs, 
-                $oc->qtde, 
-                number_format($oc->valor_max, 2, ',', '.'), 
+            $qtd_ocs += (int) $oc->ocs;
+            $qtd_unit += (int) $oc->qtde;
+
+            $max[] = $oc->valor_max;
+            $min[] = $oc->valor_min;
+            $med[] = $oc->valor_media;
+
+            $dados_uc = [
+                $oc->uc . ' - ' . $oc->nome,
+                $oc->ocs,
+                $oc->qtde,
+                number_format($oc->valor_max, 2, ',', '.'),
                 number_format($oc->valor_min, 2, ',', '.'),
-                number_format($oc->valor_media,2, ',', '.'), 
-                '-'];
+                number_format($oc->valor_media,2, ',', '.'),
+                '-'
+            ];
+
+            if ($input['uc'] != $oc->nome) {
+                $dados[] = $dados_uc;
+            } else {
+                array_unshift($dados, $dados_uc);
+            }
+
         }
+        
+        $todos = [
+            'Todos',
+            $qtd_ocs,
+            $qtd_unit,
+            number_format(max($max), 2, ',', '.'),
+            number_format(min($min), 2, ',', '.'),
+            number_format(Stats::media($med), 2, ',', '.'),
+            '-'
+        ];
+        array_unshift($dados, $todos);
 
         return $dados;
     }

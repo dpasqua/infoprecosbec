@@ -65,6 +65,9 @@ class QuerySQL
 
     public static function graficoPrecoMedioTotalOCs($codigo, $dt_inicial, $dt_final)
     {
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
+
         $sql = 'select MONTH(dt_encerramento), YEAR(dt_encerramento), count(*) 
                 from ocs o 
                 inner join (select distinct id_oc as id_oc from itens where codigo = :codigo) i
@@ -78,6 +81,9 @@ class QuerySQL
 
     public static function graficoPrecoMedio($codigo, $dt_inicial, $dt_final)
     {
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
+
         $sql = 'select MONTH(dt_encerramento), YEAR(dt_encerramento), min(menor_valor), avg(menor_valor) 
                 from itens i inner join ocs o on i.id_oc=o.id 
                 where i.codigo = :codigo AND dt_encerramento BETWEEN :dt_inicial AND :dt_final 
@@ -89,6 +95,9 @@ class QuerySQL
 
     public static function graficoRegioes($codigo, $dt_inicial, $dt_final)
     {
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
+
         $sql = 'select count(*), r.nome from ocs o 
                 inner join uges u on o.id_uge = u.id 
                 inner join municipios m on u.id_municipio = m.id  
@@ -104,6 +113,9 @@ class QuerySQL
 
     public static function graficoMunicipios($codigo, $dt_inicial, $dt_final)
     {
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
+
         $sql = 'select max(i.menor_valor), r.nome from ocs o 
                 inner join uges u on o.id_uge = u.id 
                 inner join municipios m on u.id_municipio = m.id  
@@ -119,6 +131,9 @@ class QuerySQL
 
     public static function totalOCs($codigo, $dt_inicial, $dt_final)
     {
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
+
         $sql = 'select count(*) from ocs 
                 where id in (select distinct id_oc from itens where codigo = :codigo)
                 AND dt_encerramento BETWEEN :dt_inicial AND :dt_final';
