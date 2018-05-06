@@ -48,7 +48,7 @@
                                         <div class="input-field col s12 m6">
                                             <i class="material-icons prefix">location_on</i>
                                             <input type="text" name="uc" id="inputUC" class="autocomplete" placeholder="Digite o nome ou código da UC/UGE que será usado como referência">
-                                            <label for="inputUC">UC/UGE</label>
+                                            <label for="inputUC">UC</label>
                                         </div>
                                         <div class="input-field col s12 m6 l3">
                                             <i class="material-icons prefix">event_available</i>
