@@ -179,7 +179,6 @@ class BecPrecos
             text += '</tr>';
         });
         $('#myTableFornecedor > tbody:last-child').append(text);
-        this.selecionaTableFornecedorRow(2);
     }
 
     // chart1
@@ -381,7 +380,7 @@ class BecPrecos
                 },
                 title: {
                     display: true,
-                    text: 'Unidades Compradas por Região Geográfica'
+                    text: 'Unidades Compradas por Porte'
                 },
                 labels: ['label'],
                 tooltips: {

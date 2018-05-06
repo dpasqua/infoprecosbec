@@ -279,10 +279,10 @@ class BecprecosController extends Controller
             if ($porte->porcentagem == 0) {
                 continue; // nao adiciona
             }
+
             $dados_formatados['labels'][] = $porte->porte;
             $dados_formatados['porcentagem'][] = $porte->porcentagem;
         }
-
         return $dados_formatados;
     }
 
@@ -310,6 +310,10 @@ class BecprecosController extends Controller
     private function pegaInfoGeral(array $input)
     {
         $fornecs = $this->pegaTotalFornecedores($input);
+        $fornecs_outros = $fornecs['total_outros'] . ' Outros (' .
+            number_format($fornecs['porcentagem_outros'], 2, ',', '.') . '%)';
+        $fornecs_epps_me = $fornecs['total_epps_me'] . ' EPP/ME (' .
+            number_format($fornecs['porcentagem_epps_me'], 2, ',', '.') . '%)';
 
         $dados = [
             'unitario_min_mes' => 'Jan/2018',
@@ -321,10 +325,10 @@ class BecprecosController extends Controller
             'investimento_valor' => 'R$ 10.000.000,00',
             'orgao_comprador_max' => 'Prefeitura Municipal de São Paulo',
             'oc_num' => $this->pegaTotalOCs($input),
-            'fornecedores_participantes' => $fornecs->total_fornecedores,
-            'vencedores_diferentes' => $fornecs->total_vencedores,
-            'fornecedores_epp' => '33 EPP/ME (62%)',
-            'fornecedores_outros' => '20 Outros (38%)'
+            'fornecedores_participantes' => $fornecs['total'],
+            'vencedores_diferentes' => $fornecs['vencedores'],
+            'fornecedores_epp' => $fornecs_epps_me,
+            'fornecedores_outros' => $fornecs_outros
         ];
 
         return $dados;
@@ -337,7 +341,24 @@ class BecprecosController extends Controller
 
     private function pegaTotalFornecedores(array $input)
     {
-        return QuerySQL::totalFornecedores($input['produto'], $input['data_inicial'], $input['data_final']);
+        $fornecs = QuerySQL::totalFornecedores($input['produto'], $input['data_inicial'], $input['data_final']);
+        $dados_formatados = [
+            'total' => 0, 'vencedores' => 0, 'total_outros' => 0, 'total_epps_me' => 0
+        ];
+
+        foreach ($fornecs as $fornec) {
+            if ($fornec->porte == 'Outros') {
+                $dados_formatados['total_outros'] = $fornec->total_fornecedores;
+            }
+            $dados_formatados['total'] += $fornec->total_fornecedores;
+            $dados_formatados['vencedores'] += $fornec->total_vencedores;
+        }
+        $dados_formatados['total_epps_me'] = $dados_formatados['total'] - $dados_formatados['total_outros'];
+        $dados_formatados['porcentagem_outros'] =
+            Stats::porcentagem($dados_formatados['total'], $dados_formatados['total_outros']);
+        $dados_formatados['porcentagem_epps_me'] =
+            Stats::porcentagem($dados_formatados['total'], $dados_formatados['total_epps_me']);
+        return $dados_formatados;
     }
 
 }
