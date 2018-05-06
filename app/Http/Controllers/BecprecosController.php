@@ -17,10 +17,10 @@ class BecprecosController extends Controller
      */
     public function autoCompletePrefeituras()
     {
-        $prefeituras = DB::select('select nome from uges');
+        $prefeituras = DB::select('select uc, nome from uges');
         $data = [];
         foreach ($prefeituras as $prefeitura) {
-            $data[$prefeitura->nome] = null;
+            $data[$prefeitura->uc . ' - ' . $prefeitura->nome] = null;
         }
         return response()->json($data);
     }
@@ -49,15 +49,21 @@ class BecprecosController extends Controller
         // pega o codigo do produto
         list($produto) = explode(' ', $input['produto']);
         $input['produto'] = $produto;
+
+        // prefeitura
+        $uc = substr($input['uc'], strpos($input['uc'], '-') + 1);
+        $uc = trim($uc);
         
         // pegar UGES no raio com OCs dentro de datas especificadas
         $ocs = QuerySQL::valoresOCs(
             $input['produto'],
             $input['data_inicial'], 
-            $input['data_final']
+            $input['data_final'],
+            $uc,
+            (integer)$input['raio']
         );
 
-        $mapa = $this->pegaMapaDados($input['raio'], $ocs);
+        $mapa = $this->pegaMapaDados($input['raio'], $ocs, $uc);
         $table = $this->pegaTableDados($input, $ocs);
         $tableFornecedor = $this->pegaTableFornecedorDados($input);
 
@@ -84,10 +90,11 @@ class BecprecosController extends Controller
     /**
      * dados do mapa
      */
-    private function pegaMapaDados($raio, $ocs)
-    {
+    private function pegaMapaDados($raio, $ocs, $uc)
+    { 
+        list($coordenadas_uc) = QuerySQL::selecionaCoordenadasUGE($uc);
         $mapa = [
-            'center' => [ -23.45646630689063, -46.5166256, "Av. Mariana Ubaldina do Espírito Santo"],
+            'center' => [ $coordenadas_uc->lat, $coordenadas_uc->log, $uc],
             'raio' => $raio
         ];
 
@@ -108,8 +115,6 @@ class BecprecosController extends Controller
      */
     private function pegaTableDados(array $input, $ocs)
     {
-        $coordenadas_uc = QuerySQL::coordenadas($input['uc']);
-
         $dados = [];
 
         $qtd_ocs = 0;

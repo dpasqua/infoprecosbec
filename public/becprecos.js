@@ -4,6 +4,7 @@ class BecPrecos
     {
         // global
         this.markerCluster = null;
+        this.marker = null;
         this.map = null;
         this.raio = null;
         this.center = null;
@@ -32,13 +33,17 @@ class BecPrecos
         })
 
         var self = this;
-        var marker = new google.maps.Marker({position: this.center, map: this.map});
-        marker.addListener('click', function() {
+        if(this.marker != null) {
+            this.marker.setMap(null);
+        }
+
+        this.marker = new google.maps.Marker({position: this.center, map: this.map});
+        this.marker.addListener('click', function() {
             infowindow.open(this.map, marker);
             self.selecionaTableRow(2);
         });
 
-        infowindow.open(this.map, marker);
+        infowindow.open(this.map, this.marker);
     }
 
     /* gera raio */

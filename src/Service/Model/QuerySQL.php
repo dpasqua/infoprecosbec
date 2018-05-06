@@ -7,6 +7,18 @@ use Infoprecos\BEC\Service\Char\Formatter;
 
 class QuerySQL
 {
+
+    public static function selecionaCoordenadasUGE($nome)
+    {
+        $sql = '
+            SELECT X(coordenadas) as lat, Y(coordenadas) as log
+            FROM uges WHERE nome = :nome    
+        ';
+
+        $result = DB::select(DB::raw($sql), ['nome' => $nome]);
+        return $result;
+    }
+
     public static function coordenadas($uge_nome)
     {
         $sql = 'SELECT AsText(`coordenadas`) AS coordenadas FROM uges WHERE nome = \'' . $uge_nome . '\'';
@@ -19,7 +31,7 @@ class QuerySQL
      * @param $dt_final
      * @return array
      */
-    public static function valoresOCs($codigo, $dt_inicial, $dt_final, $uc_nome = null)
+    public static function valoresOCs($codigo, $dt_inicial, $dt_final, $uc_nome, $raio)
     {
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
@@ -34,11 +46,14 @@ class QuerySQL
             from uges u
             inner join ocs o on u.id=o.id_uge
             inner join itens i on o.id = i.id_oc
-            where i.codigo = :codigo';
+            where i.codigo = :codigo
+            AND ST_Distance_Sphere(
+                (select coordenadas FROM uges where nome = :nome),
+                u.coordenadas
+                ) <= :raio
+            '
 
-        if($uc_nome) {
-            $sql .= ' AND u.nome = :nome';
-        }
+            ;
 
         $sql .= '
             AND dt_encerramento BETWEEN :dt_inicial AND :dt_final
@@ -50,11 +65,9 @@ class QuerySQL
                 'codigo' => $codigo,
                 'dt_inicial' => $dt_inicial, 
                 'dt_final' => $dt_final,
+                'nome' => $uc_nome,
+                'raio' => $raio
             ];
-
-        if($uc_nome) {
-            $where['nome'] = $uc_nome;
-        }
 
         $result = DB::select(DB::raw($sql), $where);
         return $result;
