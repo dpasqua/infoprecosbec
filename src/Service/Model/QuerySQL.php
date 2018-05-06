@@ -52,7 +52,6 @@ class QuerySQL
                 u.coordenadas
                 ) <= :raio
             '
-
             ;
 
         $sql .= '
@@ -76,7 +75,7 @@ class QuerySQL
     //// coordenadas raio
     //// SELECT * FROM image WHERE ST_Distance(GeomFromText('POINT(13.430692 52.518139)', 4326), location) <= 5000
 
-    public static function graficoPrecoMedioTotalOCs($codigo, $dt_inicial, $dt_final)
+    public static function graficoPrecoMedioTotalOCs($codigo, $dt_inicial, $dt_final, $uc_nome, $raio)
     {
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
@@ -85,14 +84,25 @@ class QuerySQL
                 from ocs o 
                 inner join (select distinct id_oc as id_oc from itens where codigo = :codigo) i
                 on o.id=i.id_oc
+                inner join uges u ON o.id_uge = u.id
                 WHERE dt_encerramento BETWEEN :dt_inicial AND :dt_final
+                AND ST_Distance_Sphere(
+                    (select coordenadas FROM uges where nome = :nome),
+                    u.coordenadas
+                ) <= :raio
                 GROUP BY YEAR(dt_encerramento), MONTH(dt_encerramento)';
 
-        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        $result = DB::select(DB::raw($sql), [
+            'codigo' => $codigo, 
+            'dt_inicial' => $dt_inicial, 
+            'dt_final' => $dt_final,
+            'nome' => $uc_nome,
+            'raio' => $raio
+        ]);
         return $result;
     }
 
-    public static function graficoPrecoMedio($codigo, $dt_inicial, $dt_final)
+    public static function graficoPrecoMedio($codigo, $dt_inicial, $dt_final, $uc_nome, $raio)
     {
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
@@ -100,10 +110,21 @@ class QuerySQL
         $sql = 'select MONTH(dt_encerramento) as mes, YEAR(dt_encerramento) as ano,
                 min(menor_valor) as menor_valor, avg(menor_valor) as media 
                 from itens i inner join ocs o on i.id_oc=o.id 
+                inner join uges u ON o.id_uge = u.id
                 where i.codigo = :codigo AND dt_encerramento BETWEEN :dt_inicial AND :dt_final 
+                AND ST_Distance_Sphere(
+                    (select coordenadas FROM uges where nome = :nome),
+                    u.coordenadas
+                ) <= :raio
                 GROUP BY YEAR(dt_encerramento), MONTH(dt_encerramento)';
 
-        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        $result = DB::select(DB::raw($sql), [
+            'codigo' => $codigo, 
+            'dt_inicial' => $dt_inicial, 
+            'dt_final' => $dt_final,
+            'nome' => $uc_nome,
+            'raio' => $raio
+        ]);
         return $result;
     }
 

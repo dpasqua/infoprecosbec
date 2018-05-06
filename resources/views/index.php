@@ -25,7 +25,7 @@
 <body>
 <nav>
     <div class="nav-wrapper center-align">
-        <span class="brand-logo">BEC Preços</span>
+        <span class="brand-logo">InfoPreços BEC</span>
     </div>
 </nav>
 <div class="container">
@@ -129,7 +129,7 @@
                         <div class="card-content">
                             <div class="row">
                                 <div class="col s12 m4">
-                                    <p class="center-align">A localidade que mais comprou esse produto foi a região intermediária de <span class="text-success" id="localidade_max_regiao1"></span>, seguido pelas regiões de <span class="text-warning" id="localidade_max_regiao2"></span> e <span class="text-danger"  id="localidade_max_regiao3"></span></p>
+                                    <p class="center-align">A localidade que mais comprou esse produto foi a região intermediária de <b id="localidade_max_regiao1"></b>, seguido pelas regiões de <b id="localidade_max_regiao2"></b> e <b id="localidade_max_regiao3"></b></p>
                                 </div>
                                 <div class="col s12 m8">
                                     <canvas id="myChart2"></canvas>

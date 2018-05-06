@@ -9,6 +9,12 @@ class BecPrecos
         this.raio = null;
         this.center = null;
         this.document = document;
+
+        this.chart1 = null;
+        this.chart2 = null;
+        this.chart3 = null;
+        this.chart4 = null;
+        this.chart5 = null;
     }
 
     /* inicializa mapa */
@@ -190,7 +196,11 @@ class BecPrecos
     // chart1
     newChart1(ctx, dataChart)
     {
-        var mixedChart = new Chart(ctx, {
+        if(this.chart1 != null) {
+            this.chart1.destroy();
+        }
+
+        this.chart1 = new Chart(ctx, {
             type: 'bar',
             responsive: true,
             maintainAspectRatio: false,
@@ -277,7 +287,11 @@ class BecPrecos
     // chart2
     newChart2(ctx2, dataChart)
     {
-        var myPieChart = new Chart(ctx2,{
+        if(this.chart2 != null) {
+            this.chart2.destroy();
+        }
+
+        this.chart2 = new Chart(ctx2,{
             type: 'pie',
             responsive: true,
             maintainAspectRatio: true,
@@ -291,17 +305,7 @@ class BecPrecos
                 },
                 labels: ['label'],
                 tooltips: {
-                    mode: 'index',
-                    callbacks: {
-                        afterLabel: function(tooltipItem, data) {
-                            var sum = data.datasets.reduce((sum, dataset) => {
-                                return sum + dataset.data[tooltipItem.index];
-                            }, 0);
-                            var percent = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / sum * 100;
-                            percent = percent.toFixed(2); // make a nice string
-                            return data.datasets[tooltipItem.datasetIndex].label + ': ' + percent + '%';
-                        }
-                    }
+                    mode: 'index'
                 }
             },
             data: {
