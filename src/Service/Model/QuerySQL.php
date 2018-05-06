@@ -130,7 +130,7 @@ class QuerySQL
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select max(i.menor_valor), r.nome from ocs o 
+        $sql = 'select max(i.menor_valor) as maximo, r.nome as nome from ocs o 
                 inner join uges u on o.id_uge = u.id 
                 inner join municipios m on u.id_municipio = m.id  
                 inner join regioes r on m.id_regiao=r.id
@@ -148,22 +148,28 @@ class QuerySQL
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select count(*) from ocs 
+        $sql = 'select count(*) as total from ocs 
                 where id in (select distinct id_oc from itens where codigo = :codigo)
                 AND dt_encerramento BETWEEN :dt_inicial AND :dt_final';
 
         $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
-        return $result;
+        return $result[0]->total;
     }
 
-    public static function totalFornecedores($codigo)
+    public static function totalFornecedores($codigo, $dt_inicial, $dt_final)
     {
-        $sql = 'select count(distinct id_fornecedor) from itens i
-                inner join propostas p on i.id = p.id_item
-                where codigo = :codigo';
+        $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
+        $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $result = DB::select(DB::raw($sql), ['codigo' => $codigo]);
-        return $result;
+        $sql = 'select count(distinct p.id_fornecedor) as total_fornecedores,
+                count(distinct i.id_fornecedor_vencedor) as total_vencedores
+                from itens i
+	            inner join propostas p on i.id = p.id_item
+                inner join ocs o on i.id_oc = o.id
+                where i.codigo = :codigo AND o.dt_encerramento BETWEEN :dt_inicial AND :dt_final';
+
+        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
+        return $result[0];
     }
 
     public static function precoMedioFornecedorProduto($codigo, $dt_inicial, $dt_final)

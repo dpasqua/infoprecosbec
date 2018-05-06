@@ -71,16 +71,18 @@ class BecprecosController extends Controller
         $regioes = $this->pegaChart2Dados($input);
         $portes = $this->pegaChart5Dados($input);
 
+        $municipios = $this->pegaChart3Dados($input);
+
         $data = [
             'mapa' => $mapa,
             'table' => $table,
             'chart1' => $preco_medio,
             'chart2' => $regioes,
-            'chart3' => $this->pegaChart3Dados(),
+            'chart3' => $municipios,
             'chart4' => $this->pegaChart4Dados(),
             'chart5' => $portes,
             'tableFornecedor' => $tableFornecedor,
-            'infoGeral' => $this->pegaInfoGeral()
+            'infoGeral' => $this->pegaInfoGeral($input)
         ];
         return response()->json($data);
     }
@@ -248,8 +250,11 @@ class BecprecosController extends Controller
     /**
      * Top 10 Municípios que mais compraram
      */
-    private function pegaChart3Dados()
+    private function pegaChart3Dados(array $input)
     {
+        //$municipios = QuerySQL::graficoMunicipios($input['produto'], $input['data_inicial'], $input['data_final']);
+        //var_dump($municipios); die;
+
         $dados = [
             'data' => [10000000, 7500000, 5500000, 4000000, 1500000, 1000000, 800000, 500000, 200000, 100000],
             'labels' => ['São Paulo', 'Osasco', 'Campinas', 'Jundiaí', 'Guarulhos', 'Ribeirão Preto', 'São Bernardo do Campo', 'Bauru', 'Sorocaba', 'Americana']
@@ -293,7 +298,6 @@ class BecprecosController extends Controller
         $produtos_fornecedores = QuerySQL::precoMedioFornecedorProduto($input['produto'], $input['data_inicial'], $input['data_final']);
 
         foreach ($produtos_fornecedores as $fornecedor) {
-            //var_dump ($fornecedor); die;
             $dados[] = [
                 $fornecedor->nome,
                 $fornecedor->cnpj,
@@ -308,8 +312,10 @@ class BecprecosController extends Controller
     /**
      * dados gerais
      */
-    private function pegaInfoGeral()
+    private function pegaInfoGeral(array $input)
     {
+        $fornecs = $this->pegaTotalFornecedores($input);
+
         $dados = [
             'unitario_min_mes' => 'Jan/2018',
             'unitario_min_vl' => 'R$ 4,56',
@@ -319,14 +325,24 @@ class BecprecosController extends Controller
             'investimento_municipio' => 'São Paulo',
             'investimento_valor' => 'R$ 10.000.000,00',
             'orgao_comprador_max' => 'Prefeitura Municipal de São Paulo',
-            'oc_num' => '32',
-            'fornecedores_participantes' => '53',
-            'vencedores_diferentes' => '18',
+            'oc_num' => $this->pegaTotalOCs($input),
+            'fornecedores_participantes' => $fornecs->total_fornecedores,
+            'vencedores_diferentes' => $fornecs->total_vencedores,
             'fornecedores_epp' => '33 EPP/ME (62%)',
             'fornecedores_outros' => '20 Outros (38%)'
         ];
 
         return $dados;
+    }
+
+    private function pegaTotalOCs(array $input)
+    {
+        return QuerySQL::totalOCs($input['produto'], $input['data_inicial'], $input['data_final']);
+    }
+
+    private function pegaTotalFornecedores(array $input)
+    {
+        return QuerySQL::totalFornecedores($input['produto'], $input['data_inicial'], $input['data_final']);
     }
 
 }
