@@ -162,7 +162,7 @@ class QuerySQL
                     SELECT r.id FROM uges u
                     INNER JOIN municipios m ON u.id_municipio = m.id
                     INNER JOIN regioes r ON m.id_regiao = r.id
-                    WHERE u.nome = :nome 
+                    WHERE u.nome = :nome LIMIT 1 
                 )
                 group by m.id
                 order by maximo DESC

@@ -11,6 +11,15 @@
 
 ### processar carga inicial 
  
- - php bin/console processar:municipios
- - php bin/console processar:uges
- - php bin console processar:coordenadas
+ - php bin/console.php processar:municipios
+ - php bin/console.php processar:uges
+ - php bin console.php processar:coordenadas
+
+### processar crawler api
+
+  - php bin/console.php api:ocs ddmmyyyy ddmmyyyy
+  - php bin/console.php api:ocdetalhes
+
+### processar produtos
+
+ - php bin console.php processar:produtos
