@@ -11,6 +11,7 @@ use Infoprecos\BEC\Service\Model\QuerySQL;
 class BecprecosController extends Controller
 {
     private $dados_regioes;
+    private $porcentagens_fornecs;
 
     /**
      * autocomplete prefeitura
@@ -90,7 +91,8 @@ class BecprecosController extends Controller
         $info['localidade_max_regiao2'] = $regiao2;
         $info['localidade_max_regiao3'] = $regiao3;
 
-        $portes = $this->pegaChart5Dados($input);
+        $info_geral = $this->pegaInfoGeral($input, $info);
+        $portes = $this->pegaChart5Dados();
 
         $municipios = $this->pegaChart3Dados($input);
 
@@ -103,7 +105,7 @@ class BecprecosController extends Controller
             'chart4' => $this->pegaChart4Dados(),
             'chart5' => $portes,
             'tableFornecedor' => $tableFornecedor,
-            'infoGeral' => $this->pegaInfoGeral($input, $info)
+            'infoGeral' => $info_geral
         ];
         return response()->json($data);
     }
@@ -287,31 +289,35 @@ class BecprecosController extends Controller
         return $dados;
     }
 
-    private function pegaChart5Dados(array $input)
+    private function pegaChart5Dados()
     {
-        $portes = QuerySQL::graficoTotalPorte($input['produto'], $input['data_inicial'], $input['data_final']);
-        $cem_por_cento = 0;
-
-        foreach ($portes as $porte) {
-            $cem_por_cento += $porte->total;
-        }
-        foreach ($portes as $k => $porte) {
-            $portes[$k]->porcentagem =
-                floatval(number_format(Stats::porcentagem($cem_por_cento, $porte->total), 2, '.', ','));
-        }
-
         $dados_formatados = [
             'labels' => [],
             'porcentagem' => []
         ];
 
+        $portes = [
+            [
+                'porte' => 'EPP',
+                'porcentagem' => floatval(number_format($this->porcentagens_fornecs['porcentagem_epp'], 2, '.', ','))
+            ],
+            [
+                'porte' => 'ME',
+                'porcentagem' => floatval(number_format($this->porcentagens_fornecs['porcentagem_me'], 2, '.', ','))
+            ],
+            [
+                'porte' => 'Outros',
+                'porcentagem' => floatval(number_format($this->porcentagens_fornecs['porcentagem_outros'], 2, '.', ','))
+            ]
+        ];
+
         foreach ($portes as $porte) {
-            if ($porte->porcentagem == 0) {
+            if ($porte['porcentagem'] == 0) {
                 continue; // nao adiciona
             }
 
-            $dados_formatados['labels'][] = $porte->porte;
-            $dados_formatados['porcentagem'][] = $porte->porcentagem;
+            $dados_formatados['labels'][] = $porte['porte'];
+            $dados_formatados['porcentagem'][] = $porte['porcentagem'];
         }
         return $dados_formatados;
     }
@@ -342,8 +348,10 @@ class BecprecosController extends Controller
         $fornecs = $this->pegaTotalFornecedores($input);
         $fornecs_outros = $fornecs['total_outros'] . ' Outros (' .
             number_format($fornecs['porcentagem_outros'], 2, ',', '.') . '%)';
-        $fornecs_epps_me = $fornecs['total_epps_me'] . ' EPP/ME (' .
-            number_format($fornecs['porcentagem_epps_me'], 2, ',', '.') . '%)';
+        $fornecs_epp = $fornecs['total_epp'] . ' EPP (' .
+            number_format($fornecs['porcentagem_epp'], 2, ',', '.') . '%)';
+        $fornecs_me = $fornecs['total_me'] . ' ME (' .
+            number_format($fornecs['porcentagem_me'], 2, ',', '.') . '%)';
 
         $dados = [
             'unitario_min_mes' => $info['unitario_min_mes'],
@@ -357,7 +365,8 @@ class BecprecosController extends Controller
             'oc_num' => $this->pegaTotalOCs($input),
             'fornecedores_participantes' => $fornecs['total'],
             'vencedores_diferentes' => $fornecs['vencedores'],
-            'fornecedores_epp' => $fornecs_epps_me,
+            'fornecedores_epp' => $fornecs_epp,
+            'fornecedores_me' => $fornecs_me,
             'fornecedores_outros' => $fornecs_outros
         ];
 
@@ -373,21 +382,27 @@ class BecprecosController extends Controller
     {
         $fornecs = QuerySQL::totalFornecedores($input['produto'], $input['data_inicial'], $input['data_final']);
         $dados_formatados = [
-            'total' => 0, 'vencedores' => 0, 'total_outros' => 0, 'total_epps_me' => 0
+            'total' => 0, 'vencedores' => 0
         ];
 
         foreach ($fornecs as $fornec) {
             if ($fornec->porte == 'Outros') {
                 $dados_formatados['total_outros'] = $fornec->total_fornecedores;
+            } elseif ($fornec->porte == 'ME') {
+                $dados_formatados['total_me'] = $fornec->total_fornecedores;
+            } elseif ($fornec->porte == 'EPP') {
+                $dados_formatados['total_epp'] = $fornec->total_fornecedores;
             }
             $dados_formatados['total'] += $fornec->total_fornecedores;
             $dados_formatados['vencedores'] += $fornec->total_vencedores;
         }
-        $dados_formatados['total_epps_me'] = $dados_formatados['total'] - $dados_formatados['total_outros'];
         $dados_formatados['porcentagem_outros'] =
             Stats::porcentagem($dados_formatados['total'], $dados_formatados['total_outros']);
-        $dados_formatados['porcentagem_epps_me'] =
-            Stats::porcentagem($dados_formatados['total'], $dados_formatados['total_epps_me']);
+        $dados_formatados['porcentagem_epp'] =
+            Stats::porcentagem($dados_formatados['total'], $dados_formatados['total_epp']);
+        $dados_formatados['porcentagem_me'] =
+            Stats::porcentagem($dados_formatados['total'], $dados_formatados['total_me']);
+        $this->porcentagens_fornecs = $dados_formatados;
         return $dados_formatados;
     }
 

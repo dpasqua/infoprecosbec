@@ -389,7 +389,7 @@ class BecPrecos
                 },
                 title: {
                     display: true,
-                    text: 'Unidades Compradas por Porte'
+                    text: 'Fornecedores por Porte'
                 },
                 labels: ['label'],
                 tooltips: {
