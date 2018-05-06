@@ -182,15 +182,17 @@ class QuerySQL
         $dt_inicial = Formatter::formataDataParaMySQL($dt_inicial);
         $dt_final = Formatter::formataDataParaMySQL($dt_final);
 
-        $sql = 'select count(distinct p.id_fornecedor) as total_fornecedores,
+        $sql = 'select f.porte,
+                count(distinct p.id_fornecedor) as total_fornecedores,
                 count(distinct i.id_fornecedor_vencedor) as total_vencedores
                 from itens i
-	            inner join propostas p on i.id = p.id_item
+                inner join propostas p on i.id = p.id_item
                 inner join ocs o on i.id_oc = o.id
-                where i.codigo = :codigo AND o.dt_encerramento BETWEEN :dt_inicial AND :dt_final';
+                inner join fornecedores f on p.id_fornecedor = f.id
+                where i.codigo = :codigo AND o.dt_encerramento BETWEEN :dt_inicial AND :dt_final
+                group by f.porte';
 
-        $result = DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
-        return $result[0];
+        return DB::select(DB::raw($sql), ['codigo' => $codigo, 'dt_inicial' => $dt_inicial, 'dt_final' => $dt_final]);
     }
 
     public static function precoMedioFornecedorProduto($codigo, $dt_inicial, $dt_final)
